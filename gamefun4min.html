@@ -1,96 +1,156 @@
 <!doctype html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<title>Game Fun 4 Min</title>
+  <meta charset="utf-8">
+  <title>Game Fun 4 Min</title>
+  <style>
+    body { background:#061223; color:#cfe6ff; font-family:sans-serif; text-align:center; }
+    #hud { margin-top:8px; }
+    canvas { background:#0b1630; display:block; margin:20px auto; border-radius:8px; }
+    button { margin:4px; padding:6px 12px; border-radius:6px; background:#1d3a6b; color:white; border:none; cursor:pointer; }
+  </style>
 </head>
 <body>
-<!-- Add your canvas and UI elements here, e.g.: -->
-<!--
-<canvas id="gameCanvas"></canvas>
-<div id="hud">
-	<span id="time"></span>
-	<span id="score"></span>
-	<span id="gems"></span>
-	<span id="high"></span>
-	<button id="startBtn">Start</button>
-	<button id="pauseBtn">Pause</button>
-	<button id="resetBtn">Reset</button>
-</div>
--->
+  <h1>Game Fun 4-Minute Demo</h1>
+  <canvas id="gameCanvas" width="640" height="480"></canvas>
+  <div id="hud">
+    <span id="time">04:00</span> |
+    <span id="score">0</span> pts |
+    <span id="gems">0</span> gems |
+    <span>High: <span id="high">0</span></span><br>
+    <button id="startBtn">Start</button>
+    <button id="pauseBtn">Pause</button>
+    <button id="resetBtn">Reset</button>
+  </div>
+
 <script>
-ctx.lineTo(player.x - player.radius, player.y + player.radius*0.6);
-ctx.closePath(); ctx.fillStyle = '#9feaff'; ctx.fill();
-// cockpit
-ctx.beginPath(); ctx.arc(player.x, player.y - 2, 7, 0, Math.PI*2); ctx.fillStyle='#07283d'; ctx.fill();
-ctx.restore();
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
 
+let player = { x: 320, y: 400, radius: 20 };
+let score = 0, gems = 0, timeLeft = 240, GAME_LENGTH = 240;
+let meteors = [], objects = [];
+let running = false, paused = false, lastTime = 0;
+let high = Number(localStorage.getItem('md_high')) || 0;
+document.getElementById('high').textContent = high;
 
-// HUD: small score
-ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.fillRect(6,6,210,40);
-ctx.fillStyle = '#cfe6ff'; ctx.font = '14px system-ui, Arial'; ctx.fillText('Score: ' + score, 14, 27);
-ctx.fillText('Gems: ' + gems, 120, 27);
+function beep(){ /* stub */ }
 
-
-function updateHUD(){
-const mm = Math.floor(timeLeft/60); const ss = Math.floor(timeLeft%60).toString().padStart(2,'0');
-document.getElementById('time').textContent = `${mm.toString().padStart(2,'0')}:${ss}`;
-document.getElementById('score').textContent = score;
-document.getElementById('gems').textContent = gems;
+function updateHUD() {
+  const mm = Math.floor(timeLeft/60);
+  const ss = Math.floor(timeLeft%60).toString().padStart(2,'0');
+  document.getElementById('time').textContent = `${mm.toString().padStart(2,'0')}:${ss}`;
+  document.getElementById('score').textContent = score;
+  document.getElementById('gems').textContent = gems;
+  document.getElementById('high').textContent = high;
 }
 
+function render() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
 
-function startGame(){
-if(!running){
-timeLeft = GAME_LENGTH; score = 0; gems = 0; meteors=[]; objects=[]; spawnInterval=1.2; spawnTimer=0; lastTime=0;
-running = true; paused = false; requestAnimationFrame(update);
-beep(880,0.08);
-}
-}
-function pauseGame(){ paused = !paused; document.getElementById('pauseBtn').textContent = paused ? 'Resume' : 'Pause'; if(!paused){ lastTime = 0; } }
-function resetGame(){ running=false; paused=false; timeLeft = GAME_LENGTH; score=0; gems=0; meteors=[]; objects=[]; updateHUD(); render(); }
+  // Player ship
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(player.x, player.y, player.radius, 0, Math.PI*2);
+  ctx.fillStyle = '#9feaff';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(player.x, player.y - 2, 7, 0, Math.PI*2);
+  ctx.fillStyle = '#07283d';
+  ctx.fill();
+  ctx.restore();
 
-
-function endGame(){
-running = false;
-// save high score
-if(score > high){ high = score; localStorage.setItem('md_high', String(high)); document.getElementById('high').textContent = high; }
-// show dialog overlay
-showEndOverlay();
-}
-
-
-function showEndOverlay(){
-const overlay = document.createElement('div');
-overlay.style.position='fixed'; overlay.style.left=0; overlay.style.top=0; overlay.style.right=0; overlay.style.bottom=0;
-overlay.style.display='flex'; overlay.style.alignItems='center'; overlay.style.justifyContent='center';
-overlay.style.background='rgba(2,6,20,0.6)'; overlay.style.zIndex=9999;
-const card = document.createElement('div'); card.style.background='linear-gradient(180deg,#071226,#07172b)'; card.style.padding='20px'; card.style.borderRadius='12px'; card.style.boxShadow='0 10px 40px rgba(0,0,0,0.6)'; card.style.color='#dff7ff'; card.style.width='420px';
-const h = document.createElement('h2'); h.textContent='Time!'; h.style.margin='0 0 6px 0'; card.appendChild(h);
-const p = document.createElement('div'); p.innerHTML = `<div style="font-size:20px;margin-bottom:8px">Your score: <strong>${score}</strong></div><div>Gems: ${gems}</div>`; card.appendChild(p);
-const btns = document.createElement('div'); btns.style.display='flex'; btns.style.gap='8px'; btns.style.marginTop='14px';
-const r = document.createElement('button'); r.textContent='Play again'; r.onclick = ()=>{ document.body.removeChild(overlay); startGame(); };
-const c = document.createElement('button'); c.textContent='Close'; c.onclick = ()=>{ document.body.removeChild(overlay); resetGame(); };
-btns.appendChild(r); btns.appendChild(c); card.appendChild(btns);
-overlay.appendChild(card); document.body.appendChild(overlay);
-// fanfare
-beep(1040,0.08); setTimeout(()=>beep(1320,0.06),120);
+  // HUD overlay inside canvas
+  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+  ctx.fillRect(6,6,160,36);
+  ctx.fillStyle = '#cfe6ff';
+  ctx.font = '14px Arial';
+  ctx.fillText(`Score: ${score}`, 14, 26);
+  ctx.fillText(`Gems: ${gems}`, 100, 26);
 }
 
+function update(timestamp) {
+  if (!running || paused) return;
+  if (!lastTime) lastTime = timestamp;
+  const delta = (timestamp - lastTime) / 1000;
+  lastTime = timestamp;
 
-// initial render
-render(); updateHUD();
+  timeLeft = Math.max(0, timeLeft - delta);
+  if (timeLeft <= 0) {
+    endGame();
+    return;
+  }
 
+  updateHUD();
+  render();
+  requestAnimationFrame(update);
+}
 
-// controls from UI
-document.getElementById('startBtn').addEventListener('click', ()=>{ startGame(); });
-document.getElementById('pauseBtn').addEventListener('click', ()=>{ pauseGame(); });
-document.getElementById('resetBtn').addEventListener('click', ()=>{ resetGame(); });
+function startGame() {
+  if (!running) {
+    running = true;
+    paused = false;
+    timeLeft = GAME_LENGTH;
+    score = 0; gems = 0;
+    lastTime = 0;
+    requestAnimationFrame(update);
+  }
+}
 
+function pauseGame() {
+  paused = !paused;
+  document.getElementById('pauseBtn').textContent = paused ? 'Resume' : 'Pause';
+  if (!paused) { lastTime = 0; requestAnimationFrame(update); }
+}
 
-// friendly autosave of canvas size on load
-window.addEventListener('load', ()=>{ resize(); render(); });
+function resetGame() {
+  running = false; paused = false;
+  timeLeft = GAME_LENGTH; score = 0; gems = 0;
+  updateHUD(); render();
+}
 
+function endGame() {
+  running = false;
+  if (score > high) {
+    high = score;
+    localStorage.setItem('md_high', String(high));
+  }
+  updateHUD();
+  showEndOverlay();
+}
+
+function showEndOverlay() {
+  const overlay = document.createElement('div');
+  overlay.style.position = 'fixed';
+  overlay.style.left = overlay.style.top = 0;
+  overlay.style.right = overlay.style.bottom = 0;
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.background = 'rgba(2,6,20,0.6)';
+  const card = document.createElement('div');
+  card.style.background = '#07172b';
+  card.style.padding = '20px';
+  card.style.borderRadius = '12px';
+  card.style.color = '#dff7ff';
+  card.innerHTML = `<h2>Time!</h2>
+    <p>Your score: <strong>${score}</strong><br>Gems: ${gems}</p>`;
+  const playAgain = document.createElement('button');
+  playAgain.textContent = 'Play again';
+  playAgain.onclick = () => { document.body.removeChild(overlay); startGame(); };
+  card.appendChild(playAgain);
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+}
+
+// UI buttons
+document.getElementById('startBtn').onclick = startGame;
+document.getElementById('pauseBtn').onclick = pauseGame;
+document.getElementById('resetBtn').onclick = resetGame;
+
+// Initial draw
+render();
+updateHUD();
 </script>
 </body>
 </html>
