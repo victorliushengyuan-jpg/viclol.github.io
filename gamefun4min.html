@@ -1,0 +1,78 @@
+<!doctype html>
+ctx.lineTo(player.x - player.radius, player.y + player.radius*0.6);
+ctx.closePath(); ctx.fillStyle = '#9feaff'; ctx.fill();
+// cockpit
+ctx.beginPath(); ctx.arc(player.x, player.y - 2, 7, 0, Math.PI*2); ctx.fillStyle='#07283d'; ctx.fill();
+ctx.restore();
+
+
+// HUD: small score
+ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.fillRect(6,6,210,40);
+ctx.fillStyle = '#cfe6ff'; ctx.font = '14px system-ui, Arial'; ctx.fillText('Score: ' + score, 14, 27);
+ctx.fillText('Gems: ' + gems, 120, 27);
+}
+
+
+function updateHUD(){
+const mm = Math.floor(timeLeft/60); const ss = Math.floor(timeLeft%60).toString().padStart(2,'0');
+document.getElementById('time').textContent = `${mm.toString().padStart(2,'0')}:${ss}`;
+document.getElementById('score').textContent = score;
+document.getElementById('gems').textContent = gems;
+}
+
+
+function startGame(){
+if(!running){
+timeLeft = GAME_LENGTH; score = 0; gems = 0; meteors=[]; objects=[]; spawnInterval=1.2; spawnTimer=0; lastTime=0;
+running = true; paused = false; requestAnimationFrame(update);
+beep(880,0.08);
+}
+}
+function pauseGame(){ paused = !paused; document.getElementById('pauseBtn').textContent = paused ? 'Resume' : 'Pause'; if(!paused){ lastTime = 0; } }
+function resetGame(){ running=false; paused=false; timeLeft = GAME_LENGTH; score=0; gems=0; meteors=[]; objects=[]; updateHUD(); render(); }
+
+
+function endGame(){
+running = false;
+// save high score
+if(score > high){ high = score; localStorage.setItem('md_high', String(high)); document.getElementById('high').textContent = high; }
+// show dialog overlay
+showEndOverlay();
+}
+
+
+function showEndOverlay(){
+const overlay = document.createElement('div');
+overlay.style.position='fixed'; overlay.style.left=0; overlay.style.top=0; overlay.style.right=0; overlay.style.bottom=0;
+overlay.style.display='flex'; overlay.style.alignItems='center'; overlay.style.justifyContent='center';
+overlay.style.background='rgba(2,6,20,0.6)'; overlay.style.zIndex=9999;
+const card = document.createElement('div'); card.style.background='linear-gradient(180deg,#071226,#07172b)'; card.style.padding='20px'; card.style.borderRadius='12px'; card.style.boxShadow='0 10px 40px rgba(0,0,0,0.6)'; card.style.color='#dff7ff'; card.style.width='420px';
+const h = document.createElement('h2'); h.textContent='Time!'; h.style.margin='0 0 6px 0'; card.appendChild(h);
+const p = document.createElement('div'); p.innerHTML = `<div style="font-size:20px;margin-bottom:8px">Your score: <strong>${score}</strong></div><div>Gems: ${gems}</div>`; card.appendChild(p);
+const btns = document.createElement('div'); btns.style.display='flex'; btns.style.gap='8px'; btns.style.marginTop='14px';
+const r = document.createElement('button'); r.textContent='Play again'; r.onclick = ()=>{ document.body.removeChild(overlay); startGame(); };
+const c = document.createElement('button'); c.textContent='Close'; c.onclick = ()=>{ document.body.removeChild(overlay); resetGame(); };
+btns.appendChild(r); btns.appendChild(c); card.appendChild(btns);
+overlay.appendChild(card); document.body.appendChild(overlay);
+// fanfare
+beep(1040,0.08); setTimeout(()=>beep(1320,0.06),120);
+}
+
+
+// initial render
+render(); updateHUD();
+
+
+// controls from UI
+document.getElementById('startBtn').addEventListener('click', ()=>{ startGame(); });
+document.getElementById('pauseBtn').addEventListener('click', ()=>{ pauseGame(); });
+document.getElementById('resetBtn').addEventListener('click', ()=>{ resetGame(); });
+
+
+// friendly autosave of canvas size on load
+window.addEventListener('load', ()=>{ resize(); render(); });
+
+
+</script>
+</body>
+</html>
