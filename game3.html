@@ -1,0 +1,201 @@
+<script>
+  const canvas = document.getElementById("gameCanvas");
+  const ctx = canvas.getContext("2d");
+  const scoreDisplay = document.getElementById("score");
+  const highScoreDisplay = document.getElementById("highScore");
+  const timerDisplay = document.getElementById("timer");
+  const livesDisplay = document.getElementById("lives");
+  const levelDisplay = document.getElementById("level");
+  const startButton = document.getElementById("startButton");
+  const gameOverScreen = document.getElementById("gameOverScreen");
+  const finalScoreDisplay = document.getElementById("finalScore");
+
+  let score = 0;
+  let highScore = localStorage.getItem("highScore") || 0;
+  let timeLeft = 60;
+  let lives = 3;
+  let level = 1;
+  let gameRunning = false;
+  let timerInterval;
+  let boxSpawnInterval;
+  let boxes = [];
+
+  // 🎵 Audio elements
+  const bgMusic = new Audio("https://cdn.pixabay.com/audio/2022/10/30/audio_b3bb6e7f96.mp3");
+  const clickGoodSound = new Audio("https://cdn.pixabay.com/audio/2022/03/15/audio_1cb97ad708.mp3");
+  const clickBadSound = new Audio("https://cdn.pixabay.com/audio/2022/02/10/audio_d0165e29cf.mp3");
+  const powerupSound = new Audio("https://cdn.pixabay.com/audio/2022/03/10/audio_162bdc5e92.mp3");
+
+  let muted = false;
+  bgMusic.loop = true;
+  bgMusic.volume = 0.3;
+
+  // 🔇 Mute/Unmute Button
+  const muteBtn = document.createElement("button");
+  muteBtn.textContent = "🔊 Sound On";
+  muteBtn.style.marginTop = "10px";
+  muteBtn.style.padding = "10px";
+  muteBtn.style.fontSize = "16px";
+  muteBtn.style.cursor = "pointer";
+  document.body.insertBefore(muteBtn, canvas);
+
+  muteBtn.addEventListener("click", () => {
+    muted = !muted;
+    bgMusic.muted = muted;
+    clickGoodSound.muted = muted;
+    clickBadSound.muted = muted;
+    powerupSound.muted = muted;
+    muteBtn.textContent = muted ? "🔇 Sound Off" : "🔊 Sound On";
+  });
+
+  const boxTypes = {
+    good: { color: "lime", points: 1 },
+    bad: { color: "red", points: -1 },
+    power: { color: "gold", points: 5, extraTime: 5 }
+  };
+
+  function randomBox() {
+    const typeChance = Math.random();
+    let type = "good";
+    if (typeChance < 0.1) type = "power";
+    else if (typeChance < 0.25) type = "bad";
+
+    const size = Math.max(30 - level * 1.5, 10);
+    return {
+      x: Math.random() * (canvas.width - size),
+      y: Math.random() * (canvas.height - size),
+      size,
+      type,
+      createdAt: Date.now()
+    };
+  }
+
+  function spawnBox() {
+    if (!gameRunning) return;
+    boxes.push(randomBox());
+    draw();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    boxes.forEach(box => {
+      ctx.fillStyle = boxTypes[box.type].color;
+      ctx.fillRect(box.x, box.y, box.size, box.size);
+    });
+  }
+
+  canvas.addEventListener("click", (e) => {
+    if (!gameRunning) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    let clicked = false;
+
+    for (let i = boxes.length - 1; i >= 0; i--) {
+      const b = boxes[i];
+      if (
+        x >= b.x &&
+        x <= b.x + b.size &&
+        y >= b.y &&
+        y <= b.y + b.size
+      ) {
+        const boxType = boxTypes[b.type];
+
+        score += boxType.points;
+        if (boxType.extraTime) {
+          timeLeft += boxType.extraTime;
+          if (!muted) powerupSound.play();
+        } else if (b.type === "bad") {
+          lives--;
+          if (!muted) clickBadSound.play();
+        } else {
+          if (!muted) clickGoodSound.play();
+        }
+
+        boxes.splice(i, 1);
+        clicked = true;
+        break;
+      }
+    }
+
+    if (!clicked) {
+      lives--;
+      if (!muted) clickBadSound.play();
+    }
+
+    updateHUD();
+    draw();
+
+    if (lives <= 0) {
+      endGame();
+    }
+
+    if (score >= level * 10) {
+      level++;
+      increaseDifficulty();
+    }
+  });
+
+  function updateHUD() {
+    scoreDisplay.innerText = `Score: ${score}`;
+    highScoreDisplay.innerText = `High Score: ${highScore}`;
+    timerDisplay.innerText = `Time Left: ${timeLeft}s`;
+    livesDisplay.innerText = `Lives: ${lives}`;
+    levelDisplay.innerText = `Level: ${level}`;
+  }
+
+  function increaseDifficulty() {
+    clearInterval(boxSpawnInterval);
+    const spawnRate = Math.max(900 - level * 50, 200);
+    boxSpawnInterval = setInterval(spawnBox, spawnRate);
+  }
+
+  function startGame() {
+    score = 0;
+    timeLeft = 60;
+    lives = 3;
+    level = 1;
+    boxes = [];
+    gameRunning = true;
+
+    startButton.style.display = "none";
+    gameOverScreen.style.display = "none";
+    updateHUD();
+    draw();
+
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      updateHUD();
+      if (timeLeft <= 0 || lives <= 0) {
+        endGame();
+      }
+    }, 1000);
+
+    increaseDifficulty();
+
+    if (!muted) {
+      bgMusic.currentTime = 0;
+      bgMusic.play();
+    }
+  }
+
+  function endGame() {
+    clearInterval(timerInterval);
+    clearInterval(boxSpawnInterval);
+    gameRunning = false;
+    bgMusic.pause();
+
+    if (score > highScore) {
+      highScore = score;
+      localStorage.setItem("highScore", highScore);
+    }
+
+    finalScoreDisplay.innerText = `Your Score: ${score}`;
+    gameOverScreen.style.display = "block";
+    startButton.style.display = "block";
+  }
+
+  updateHUD();
+</script>
