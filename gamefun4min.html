@@ -4,10 +4,27 @@
   <meta charset="utf-8">
   <title>Game Fun 4 Min</title>
   <style>
-    body { background:#061223; color:#cfe6ff; font-family:sans-serif; text-align:center; }
-    #hud { margin-top:8px; }
-    canvas { background:#0b1630; display:block; margin:20px auto; border-radius:8px; }
-    button { margin:4px; padding:6px 12px; border-radius:6px; background:#1d3a6b; color:white; border:none; cursor:pointer; }
+    body {
+      background: #061223;
+      color: #cfe6ff;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    canvas {
+      background: #0b1630;
+      display: block;
+      margin: 20px auto;
+      border-radius: 8px;
+    }
+    button {
+      margin: 4px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: #1d3a6b;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -27,14 +44,16 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-let player = { x: 320, y: 400, radius: 20 };
+// Game variables
+let player = { x: 320, y: 400, radius: 20, speed: 200 };
 let score = 0, gems = 0, timeLeft = 240, GAME_LENGTH = 240;
-let meteors = [], objects = [];
 let running = false, paused = false, lastTime = 0;
+let keys = {};
 let high = Number(localStorage.getItem('md_high')) || 0;
 document.getElementById('high').textContent = high;
 
-function beep(){ /* stub */ }
+window.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; });
+window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
 
 function updateHUD() {
   const mm = Math.floor(timeLeft/60);
@@ -47,26 +66,15 @@ function updateHUD() {
 
 function render() {
   ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  // Player ship
-  ctx.save();
+  // Draw player
   ctx.beginPath();
-  ctx.arc(player.x, player.y, player.radius, 0, Math.PI*2);
+  ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
   ctx.fillStyle = '#9feaff';
   ctx.fill();
   ctx.beginPath();
-  ctx.arc(player.x, player.y - 2, 7, 0, Math.PI*2);
+  ctx.arc(player.x, player.y - 2, 7, 0, Math.PI * 2);
   ctx.fillStyle = '#07283d';
   ctx.fill();
-  ctx.restore();
-
-  // HUD overlay inside canvas
-  ctx.fillStyle = 'rgba(255,255,255,0.1)';
-  ctx.fillRect(6,6,160,36);
-  ctx.fillStyle = '#cfe6ff';
-  ctx.font = '14px Arial';
-  ctx.fillText(`Score: ${score}`, 14, 26);
-  ctx.fillText(`Gems: ${gems}`, 100, 26);
 }
 
 function update(timestamp) {
@@ -75,6 +83,12 @@ function update(timestamp) {
   const delta = (timestamp - lastTime) / 1000;
   lastTime = timestamp;
 
+  // Move player
+  if (keys['arrowleft'] || keys['a']) player.x -= player.speed * delta;
+  if (keys['arrowright'] || keys['d']) player.x += player.speed * delta;
+  player.x = Math.max(player.radius, Math.min(canvas.width - player.radius, player.x));
+
+  // Countdown timer
   timeLeft = Math.max(0, timeLeft - delta);
   if (timeLeft <= 0) {
     endGame();
@@ -91,7 +105,8 @@ function startGame() {
     running = true;
     paused = false;
     timeLeft = GAME_LENGTH;
-    score = 0; gems = 0;
+    score = 0;
+    gems = 0;
     lastTime = 0;
     requestAnimationFrame(update);
   }
@@ -104,9 +119,13 @@ function pauseGame() {
 }
 
 function resetGame() {
-  running = false; paused = false;
-  timeLeft = GAME_LENGTH; score = 0; gems = 0;
-  updateHUD(); render();
+  running = false;
+  paused = false;
+  timeLeft = GAME_LENGTH;
+  score = 0;
+  gems = 0;
+  updateHUD();
+  render();
 }
 
 function endGame() {
@@ -121,29 +140,27 @@ function endGame() {
 
 function showEndOverlay() {
   const overlay = document.createElement('div');
-  overlay.style.position = 'fixed';
-  overlay.style.left = overlay.style.top = 0;
-  overlay.style.right = overlay.style.bottom = 0;
-  overlay.style.display = 'flex';
-  overlay.style.alignItems = 'center';
-  overlay.style.justifyContent = 'center';
-  overlay.style.background = 'rgba(2,6,20,0.6)';
+  Object.assign(overlay.style, {
+    position: 'fixed', left: 0, top: 0, right: 0, bottom: 0,
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    background: 'rgba(2,6,20,0.6)'
+  });
   const card = document.createElement('div');
-  card.style.background = '#07172b';
-  card.style.padding = '20px';
-  card.style.borderRadius = '12px';
-  card.style.color = '#dff7ff';
+  Object.assign(card.style, {
+    background: '#07172b', padding: '20px', borderRadius: '12px', color: '#dff7ff'
+  });
   card.innerHTML = `<h2>Time!</h2>
-    <p>Your score: <strong>${score}</strong><br>Gems: ${gems}</p>`;
-  const playAgain = document.createElement('button');
-  playAgain.textContent = 'Play again';
-  playAgain.onclick = () => { document.body.removeChild(overlay); startGame(); };
-  card.appendChild(playAgain);
+  <p>Your score: <strong>${score}</strong></p>
+  <p>Gems: ${gems}</p>`;
+  const btn = document.createElement('button');
+  btn.textContent = 'Play again';
+  btn.onclick = () => { document.body.removeChild(overlay); startGame(); };
+  card.appendChild(btn);
   overlay.appendChild(card);
   document.body.appendChild(overlay);
 }
 
-// UI buttons
+// UI
 document.getElementById('startBtn').onclick = startGame;
 document.getElementById('pauseBtn').onclick = pauseGame;
 document.getElementById('resetBtn').onclick = resetGame;
