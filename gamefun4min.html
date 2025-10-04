@@ -1,4 +1,24 @@
 <!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Game Fun 4 Min</title>
+</head>
+<body>
+<!-- Add your canvas and UI elements here, e.g.: -->
+<!--
+<canvas id="gameCanvas"></canvas>
+<div id="hud">
+	<span id="time"></span>
+	<span id="score"></span>
+	<span id="gems"></span>
+	<span id="high"></span>
+	<button id="startBtn">Start</button>
+	<button id="pauseBtn">Pause</button>
+	<button id="resetBtn">Reset</button>
+</div>
+-->
+<script>
 ctx.lineTo(player.x - player.radius, player.y + player.radius*0.6);
 ctx.closePath(); ctx.fillStyle = '#9feaff'; ctx.fill();
 // cockpit
@@ -10,7 +30,6 @@ ctx.restore();
 ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.fillRect(6,6,210,40);
 ctx.fillStyle = '#cfe6ff'; ctx.font = '14px system-ui, Arial'; ctx.fillText('Score: ' + score, 14, 27);
 ctx.fillText('Gems: ' + gems, 120, 27);
-}
 
 
 function updateHUD(){
@@ -71,7 +90,6 @@ document.getElementById('resetBtn').addEventListener('click', ()=>{ resetGame();
 
 // friendly autosave of canvas size on load
 window.addEventListener('load', ()=>{ resize(); render(); });
-
 
 </script>
 </body>
