@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Click the Box Game</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial;
+    }
+    canvas {
+      border: 2px solid black;
+      margin-top: 10px;
+    }
+    #score, #timer {
+      font-size: 20px;
+      margin: 10px;
+    }
+    #startButton {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎯 Click the Box!</h1>
+  <div id="score">Score: 0</div>
+  <div id="timer">Time Left: 30s</div>
+  <button id="startButton">Start Game</button>
+  <br>
+  <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const scoreDisplay = document.getElementById('score');
+    const timerDisplay = document.getElementById('timer');
+    const startButton = document.getElementById('startButton');
+
+    let box = {
+      x: 100,
+      y: 100,
+      size: 50,
+      color: 'blue'
+    };
+
+    let score = 0;
+    let timeLeft = 30;
+    let gameRunning = false;
+    let moveInterval;
+    let timerInterval;
+
+    function getRandomColor() {
+      const colors = ['red', 'green', 'blue', 'orange', 'purple', 'pink'];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    function drawBox() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = box.color;
+      ctx.fillRect(box.x, box.y, box.size, box.size);
+    }
+
+    function moveBox() {
+      box.x = Math.random() * (canvas.width - box.size);
+      box.y = Math.random() * (canvas.height - box.size);
+      box.color = getRandomColor();
+      drawBox();
+    }
+
+    canvas.addEventListener('click', function(e) {
+      if (!gameRunning) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      if (
+        mouseX > box.x &&
+        mouseX < box.x + box.size &&
+        mouseY > box.y &&
+        mouseY < box.y + box.size
+      ) {
+        score += 1;
+        scoreDisplay.innerText = 'Score: ' + score;
+        moveBox();
+      }
+    });
+
+    function startGame() {
+      score = 0;
+      timeLeft = 30;
+      gameRunning = true;
+      scoreDisplay.innerText = 'Score: 0';
+      timerDisplay.innerText = 'Time Left: 30s';
+      startButton.disabled = true;
+
+      drawBox();
+      moveInterval = setInterval(moveBox, 1500);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.innerText = 'Time Left: ' + timeLeft + 's';
+        if (timeLeft <= 0) {
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function endGame() {
+      clearInterval(moveInterval);
+      clearInterval(timerInterval);
+      gameRunning = false;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'black';
+      ctx.font = '24px Arial';
+      ctx.fillText('Game Over! Score: ' + score, 80, canvas.height / 2);
+      startButton.disabled = false;
+    }
+
+    startButton.addEventListener('click', startGame);
+  </script>
+</body>
+</html>
