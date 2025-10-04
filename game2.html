@@ -94,7 +94,11 @@
       scoreDisplay.innerText = 'Score: 0';
       timerDisplay.innerText = 'Time Left: 30s';
       startButton.disabled = true;
-
+    
+      // Reset box position and color at the start of the game
+      box.x = Math.random() * (canvas.width - box.size);
+      box.y = Math.random() * (canvas.height - box.size);
+      box.color = getRandomColor();
       drawBox();
       moveInterval = setInterval(moveBox, 1500);
       timerInterval = setInterval(() => {
