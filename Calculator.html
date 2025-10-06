@@ -1,1 +1,18 @@
-
+<!DOCTYPE html>
+<heml>
+    <head>
+        <title>Calculator</title>
+    </head>
+    <body>
+<h1>This is a calculator.</h1>\
+<p>
+<strong>the answer is:</strong> <span id="answer"></span>
+<script>
+    let num1 = Number(promt("Enter a value:"));
+    let num2 = Number(promt("Enter another value!"));
+    let answer = num1 + num2;
+    document.getElementById("answer").textContent = answer;
+</script>
+</p>
+    </body>
+</heml>
