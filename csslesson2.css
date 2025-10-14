@@ -1,9 +1,9 @@
 
 body {
-	background: blue;
+	background: rgb(171, 171, 183);
 }
 
 .question {
-	color: white;
+	color: rgb(113, 30, 30);
 	font-size: 1.5rem;
 }
