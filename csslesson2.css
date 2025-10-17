@@ -3,8 +3,11 @@ body {
 	background: rgb(171, 171, 183);
 }
 
-.question {
+.questions {
 	color: rgb(113, 30, 30);
-	border: 5px;
-	border-color: rgb(165, 13, 13);
+	border: 10px;
+	border-color: rgb(0, 0, 0);
+	border-style: solid;
+	margin: 20px;
+	padding: 20px;
 }
