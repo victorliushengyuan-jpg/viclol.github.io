@@ -1,0 +1,76 @@
+body {
+font-family: "Trebuchet MS", sans-serif;
+margin: 0;
+color: #3b2b0a;
+}
+
+#sidebar {
+    position: fixed;
+    top: solid;
+    left: 0;
+    width: 220px;
+    height: 100%;
+    background-color: #957244;
+    padding: 20px;
+    box-shadow: 3px 0 8px 
+    rgba(0, 0, 0, 0.2);
+}
+#sidebar h2 {
+    color: white;
+    text-align: center;
+}
+#sidebar ul {
+    list-style: none;
+    padding: 0px;
+}
+#sidebar li {
+    margin: 15px 0px;
+}
+#sidebar a {
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+}
+#sidebar a :hover {
+    text-decoration: underline;
+}
+#content {
+    margin-left: 250px;
+    padding: 40px;
+    background-color: #ebe3e3;
+}
+.section {
+padding: 50px;
+margin-bottom: 50px;
+border-radius: 10px;
+}
+.light {
+background-color: #fff8e6;
+}
+.dork {
+
+background-color: #e7cba9;
+color: #3b2b0a;
+}
+.wool-box {
+position: relative;
+background-color: #f3e0b6;
+padding: 30px;
+margin-top: 25px;
+border-radius: 8px;
+}
+.wool-detail{
+position: absolute;
+bottom: 10px;
+right: 10px;
+background-color: #d4a373;
+color: white;
+padding: 10px;
+border-radius: 5px;
+}
+
+#footer {
+text-align: center;
+padding: 20px;
+background-color: #d8b382;
+color: white;
+}

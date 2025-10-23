@@ -1,1 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Lesson 5</title>
+<style>
+    #header{
+    position: sticky;
+    top: 0%;
+    width: 80%;
+    height: 30px;
+    background-color: #7b9e89;
+    margin: auto;
+    z-index: 1;
+    }
+    #header p, h2{
+        display: inline;
+    }
 
+    #parent{
+    position: relative;
+    width: 80%;
+    height :550px;
+    margin :auto;
+    background-color: #6662e2;
+}
+#child{
+    position: ansolute;
+    width: 75%;
+    height: 350px;
+    background-color: #e2e066;
+    right: 7%;
+}
+
+
+
+
+
+</style>
+</head>
+<body>
+    <h1>CSS: Sizing, Positioning & Selectors</h1>
+
+<div id="header">
+<h2>I'm Sticky</h2>
+<p><i>Text colour: #020122 </i></p>
+<p><i>Background colour: #7b9e89</i></p>
+</div>
+<div id="parent">
+<h3>3 things you learned </h3>
+<p>response</p> <p>response </p> <p>response </p>
+<div id="child">
+<h3>2 things you would like to know more about</h3>
+<p>response </p> <p>response</p>
+</div>
+</div>
+
+<div id="fixed">
+    <p>colour: #fc9e4f</p>
+    <p>height: auto</p>
+    <p>width: 30%</p>
+</div>
+
+<div id="relative">
+    <h3>1 thing you are cojnfused about</h3>
+    <p>response</p>
+</div>
+
+</body>
+</html>
