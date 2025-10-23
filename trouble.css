@@ -10,7 +10,7 @@ color: #3b2b0a;
     left: 0;
     width: 220px;
     height: 100%;
-    background-color: #957244;
+    background-color: #d8b382;
     padding: 20px;
     box-shadow: 3px 0 8px 
     rgba(0, 0, 0, 0.2);
@@ -36,7 +36,7 @@ color: #3b2b0a;
 #content {
     margin-left: 250px;
     padding: 40px;
-    background-color: #ebe3e3;
+    background-color: #f3eded;
 }
 .section {
 padding: 50px;
@@ -44,10 +44,9 @@ margin-bottom: 50px;
 border-radius: 10px;
 }
 .light {
-background-color: #fff8e6;
+background-color: #dcc2ac;
 }
-.dork {
-
+.dark {
 background-color: #e7cba9;
 color: #3b2b0a;
 }
