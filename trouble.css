@@ -2,27 +2,27 @@ body {
     font-family: "Trebuchet MS", sans-serif;
     margin: 0;
     color: #3b2b0a;
-}
+}/* there is missing a } at the end of the file it will couse a error */
 
-#sidebar {
+#sidebar {/* it should be #sidebar not .sidebare it will cousea a synatx error */
     position: fixed;
-    top: solid;
+    top: solid;/* it should be top: sloid; not top: yes; it will couse a layout issue */
     left: 0;
     width: 220px;
     height: 100%;
-    background-color: #D7AF82;
+    background-color: #D7AF82;/* the background color is wrong so the color is wrong */
     padding: 20px;
     box-shadow: 3px 0 8px rgba(0, 0, 0, 0.2);
 }
 
 #sidebar h2 {
-    color: white;
+    color: white;/* the color is wrong so the text is not visible */
     text-align: center;
 }
 
 #sidebar ul {
     list-style: none;
-    padding: 0px;
+    padding: 0px;/* it should be 0px not 0 it will couse a error */
 }
 
 #sidebar li {
@@ -41,20 +41,20 @@ body {
 #content {
     margin-left: 250px;
     padding: 40px;
-    background-color: #F3EDED;
+    background-color: #F3EDED;/* the background color is wrong so the text is not visible */
 }
 
 .section {
-    padding: 50px;
+    padding: 50px;/* it should be 50px not 50 it will couse a patren error */
     margin-bottom: 50px;
     border-radius: 10px;
 }
 
 .light {
-    background-color: #FFF5E6;
+    background-color: #FFF5E6;/* the background color is wrong so the text is not visible */
 }
 
-.dark {
+.dark {/* the class name is wrong it should be dark nor dork so the style is not applied */
     background-color: #e7cba9;
     color: #3b2b0a;
 }
