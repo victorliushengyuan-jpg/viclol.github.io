@@ -1,4 +1,29 @@
 body{
     background-color: blueviolet;
-    background-image: url(https://media.newyorker.com/photos/59095bb86552fa0be682d9d0/master/w_2240,c_limit/Monkey-Selfie.jpg);
+    background-image: url("https://news.gsu.edu/files/2019/10/monkey-800x600.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.polaroid{
+    width: 50%;
+    margin: auto;
+    background-color: black;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    margin-bottom: 25px;
+    border-radius: 5px;
+}
+
+.polaroid img{
+    width: 95%;
+    margin: auto;
+    border-radius: 5px;
+    display: block;
+}
+.container{
+    text-align: center;
+    padding: 10px 20px;
+    color: white;
+    font-size: 1.5rem;
 }
