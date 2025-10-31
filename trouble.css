@@ -54,7 +54,7 @@ body {
     background-color: #FFF5E6;/* the background color is wrong so the text is not visible */
 }
 
-.dark {/* the class name is wrong it should be dark nor dork so the style is not applied */
+.dark {/* the class name is wrong it should be dark not dork so the style is not applied */
     background-color: #e7cba9;
     color: #3b2b0a;
 }
