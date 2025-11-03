@@ -13,9 +13,16 @@
     background-color: #7b9e89;
     margin: auto;
     z-index: 1;
+    border-style: solid;
+    border-color: #111111;
+    border-width:3px;
+    border-radius: 20px;
+
     }
     #header p, h2{
         display: inline;
+        
+
     }
 
     #parent{
@@ -24,16 +31,60 @@
     height :550px;
     margin :auto;
     background-color: #6662e2;
+    border-style: solid;
+    border-color: #111111;
+    border-width:3px;
+    border-radius: 20px;
 }
 #child{
-    position: ansolute;
+    position: absolute;
     width: 75%;
     height: 350px;
     background-color: #e2e066;
     right: 7%;
+    border-radius: 70px;
 }
 
+#child p, h3{
+    padding: 3%;
+    font-size: 1.25rem;
+}
 
+#fixed{
+    width: 30%;
+    height: auto;
+    border-radius: 55px;
+    background-color: #fc9e4f;
+    color: #020122;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+}
+
+#fixed p{
+    display: inline;
+    padding: 5%;
+}
+
+#relative{
+    width: 60%;
+    height: 350px;
+    background-color: #edd382;
+    color: #020122;
+    position: relative;
+    top: 250px;
+    left: 20%;
+    z-index: -1;
+    border-radius: 70px;
+}
+
+#relative p, h3{
+    padding: 3%;
+    font-size: 1.25rem;
+
+
+}
+    
 
 
 
