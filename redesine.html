@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  margin: 0;
+  font-size: 28px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.header {
+  background-color: #f1f1f1;
+  padding: 30px;
+  text-align: center;
+}
+
+#navbar {
+  position: sticky;
+  top: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+#navbar a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+#navbar a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+#navbar a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+.content {
+  padding: 16px;
+}
+
+img {
+  display: block;
+  margin: auto;
+}
+p {
+  text-align: center;
+}
+* {
+  box-sizing: border-box;
+}
+
+.column {
+  float: left;
+  width: 33.33%;
+  padding: 5px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+#example1 {
+  background-image: url("https://media.istockphoto.com/id/656282962/photo/3d-interior-blank-banners-installation.webp?a=1&s=612x612&w=0&k=20&c=jLmJEa9gGG7BcEl9K1Z36gpDdKKwjVcUMd44EdQjy9Q=");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 40px;
+  color: #000;
+  background-color: #ffffff;
+}
+
+
+#example1 {
+  text-align: center;
+}
+* {
+  box-sizing: border-box;
+}
+
+.column {
+  float: left;
+  width: 33.33%;
+  padding: 5px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+.alignleft {
+	float: left;
+}
+.alignright {
+	float: center;
+}
+.alignright {
+	float: right;
+}
+* {
+  box-sizing: border-box;
+}
+
+.column {
+  float: left;
+  width: 33.33%;
+  padding: 5px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+.services {
+  display: flex;
+  justify-content: space-around; /* or space-evenly */
+  text-align: center;
+  width: 100%;
+}
+.contact-form {
+  width: 100%;
+  max-width: 600px;
+  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+}
+
+.contact-form label {
+  margin: 15px 0 5px;
+  font-size: 16px;
+  color: #444;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  border-radius: 4px;
+}
+
+.contact-form textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.send-btn {
+  margin: 25px auto 0;
+  padding: 12px 40px;
+  background-color: #8aa014; 
+  border: none;
+  font-weight: bold;
+  letter-spacing: 3px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.send-btn:hover {
+  background-color: #7c8f12;
+}
+.center {
+  margin: auto;
+  width: 50%;
+  border: 3px solid #73AD21;
+  padding: 10px;
+}
+
+
+</style>
+</head>
+<body>
+<div class="header"></div>
+
+<div id="navbar">
+  <a class="active" href="javascript:void(0)">Home</a>
+  <a href="javascript:void(0)">Our services</a>
+  <a href="javascript:void(0)">About Us</a>
+  <a href="jacascript;void(0)">Contact Us</a>
+</div>
+<div class="content">
+<img src="https://img1.wsimg.com/isteam/ip/2b6510c5-0d30-4dc6-8061-a9571f0bb37b/logo/ff38d70c-fbbc-4444-956e-439910f17d3d.png/:/rs=w:967,h:250,cg:true,m/cr=w:967,h:250/qt=q:95" alt="Clash Royale game image" width="400" height="120"/>
+<p>Custom Upholstery & Interior Design</p>
+<div class="row">
+  <div class="column">
+    <img src="https://img1.wsimg.com/isteam/ip/2b6510c5-0d30-4dc6-8061-a9571f0bb37b/interior%20design%20lilving%20room%20for%20website.jpg/:/cr=t:0%25,l:2.27%25,w:95.46%25,h:100%25/rs=w:776,h:388,cg:true" alt="Snow" style="width:100%">
+  </div>
+  <div class="column">
+    <img src="https://img1.wsimg.com/isteam/ip/2b6510c5-0d30-4dc6-8061-a9571f0bb37b/AdobeStock_72005717.jpeg/:/cr=t:12.51%25,l:0%25,w:100%25,h:74.99%25/rs=w:776,h:388,cg:true" alt="Forest" style="width:100%">
+  </div>
+  <div class="column">
+    <img src="https://img1.wsimg.com/isteam/ip/2b6510c5-0d30-4dc6-8061-a9571f0bb37b/AdobeStock_212496782.jpeg/:/cr=t:25.01%25,l:0%25,w:100%25,h:74.99%25/rs=w:776,h:388,cg:true" alt="Mountains" style="width:100%">
+  </div>
+</div>
+<div id="example1">
+  <h1>Let us bring your ideas to life!</h1>
+  <h1>Who Are We?</h1>
+  <p>
+Who Are We?
+Specializing in residential and commercial spaces, Lemon Lime offers clients a fresh and inspired approach to interior spaces. Lemon Lime Design, featuring Jone Wright, has earned top reviews and gained a fabulous reputation since its founding in 2006.
+
+We plan residential and commercial spaces that are refreshingly unique while still being personal and comfortable. Creating beautiful interiors which reflect your personal style is an art. At Lemon Lime, we take the time to plan spaces that reflect you and your personal style. Our unique perspective is grounded in both art and architecture, using colour, form and materials in creatively fresh ways to create uniquely inspired spaces. 
+
+Our services include: Interior space planning, Renovation & Re-modelling, Custom Upholstery & Finishing; and a retail store in which to find that last finishing detail. Whether your project is large or small, we look forward to working together.
+
+There's much to see here. So, take your time, look around, and learn all there is to know about us. We hope you enjoy our site and take a moment to drop us a line.</p>
+</div>
+<p><strong>Our Serivce</strong></p>
+<div class="row">
+<div class="row">
+  <div class="column">
+    <img src="https://www.marthastewart.com/thmb/9usEcxKFNSF_GEW5q9CzV3PPumc=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/small-bedroom-ideas-getty-0823-d982b46c35964a9cbd0c1d4f38bd665d.jpg" alt="Snow" style="width:100%">
+  </div>
+  <div class="column">
+    <img src="https://www.marthastewart.com/thmb/dRJ0I_nIJAtJuPYq0kZ5ITihz9E=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/small-bedroom-ideas-kerrie-kelly-design-lab-01-db0ca0ea8601416b811757235d094b09.JPG" alt="Forest" style="width:100%">
+  </div>
+  <div class="column">
+    <img src="https://www.marthastewart.com/thmb/15iXaMg1eMLepvec7GZBZ5wj7ec=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/small-bedroom-ideas-kerrie-kelly-design-lab-02-2daf29e369b14973ba523e69d556f8f3.jpg" alt="Mountains" style="width:100%">
+  </div>
+</div>
+<div id="textbox" style="
+  display: flex;
+  justify-content: space-between;
+  width: 100%;">
+<div class="services">
+  <div><strong>Interior Space Planning</strong></div>
+  <div><strong>Custom Upholstery</strong></div>
+  <div><strong>Retail Store</strong></div>
+</div>
+</div>
+<div class="row">
+  <div class="column">
+    <img src="https://img1.wsimg.com/isteam/ip/2b6510c5-0d30-4dc6-8061-a9571f0bb37b/interior%20design%20lilving%20room%20for%20website.jpg/:/cr=t:0%25,l:2.27%25,w:95.46%25,h:100%25/rs=w:776,h:388,cg:true" alt="Snow" style="width:100%">
+  </div>
+  <div class="column">
+    <img src="https://img1.wsimg.com/isteam/ip/2b6510c5-0d30-4dc6-8061-a9571f0bb37b/AdobeStock_72005717.jpeg/:/cr=t:12.51%25,l:0%25,w:100%25,h:74.99%25/rs=w:776,h:388,cg:true" alt="Forest" style="width:100%">
+  </div>
+  <div class="column">
+    <img src="https://img1.wsimg.com/isteam/ip/2b6510c5-0d30-4dc6-8061-a9571f0bb37b/AdobeStock_212496782.jpeg/:/cr=t:25.01%25,l:0%25,w:100%25,h:74.99%25/rs=w:776,h:388,cg:true" alt="Mountains" style="width:100%">
+  </div>
+</div>
+
+<div id="example1">
+  <h1>Transfer Your Space Today</h1>
+</div>
+<form class="contact-form">
+  <label for="name">Name</label>
+  <input type="text" id="name" name="name" />
+
+  <label for="email">Email*</label>
+  <input type="email" id="email" name="email" required />
+
+  <label for="message">Tell us more about your project*</label>
+  <textarea id="message" name="message" required></textarea>
+
+  <button type="submit" class="send-btn">SEND</button>
+</form>
+<div class="center">
+  <h5>This site is protected by recaptcha and the Google Privacy Policy and Terms of Service apply.</h5>
+</div>
+</div>
+<div id="example1">
+  <h4>We can help!
+Do you have a question about a project?
+Send us a message, and we'll get back to you with answers ASAP.</h4>
+</div>
+<div id="textbox" style="
+  display: flex;
+  justify-content: space-between;
+  width: 100%;">
+<div class="services">
+  <div><strong>Phone Number</strong></div>
+  <div><strong>Hours Tuesday - Saturday: 10 am - 5 pm</strong></div>
+</div>
+</div><div id="textbox" style="
+  display: flex;
+  justify-content: space-between;
+  width: 100%;">
+<div class="services">
+  <p style="color:rgb(36, 137, 54);">(905) 830-6734</p>
+  <div><strong>Sunday & Monday: Closed</strong></div>
+</div>
+</div>
+<p><strong>Reviews</strong></p>
+
+
+</html>
