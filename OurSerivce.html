@@ -2,20 +2,21 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!--page styling css-->
 <style>
-body {
+body { /* set base font size and font family */
   margin: 0;
   font-size: 28px;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.header {
+.header { /* header section styling */
   background-color: #f1f1f1;
   padding: 30px;
   text-align: center;
 }
 
-#navbar {
+#navbar { /* sticky navbar at the top of the page includes hover effects and active link highlight*/
   position: sticky;
   top: 0;
   overflow: hidden;
@@ -41,18 +42,18 @@ body {
   background-color: #04AA6D;
   color: white;
 }
-.content {
-  padding: 16px;
+.content { /*padding for text and content sections*/
+  padding: 16px; 
 }
 
-img {
+img { /*canter all image and all pagraphs*/
   display: block;
   margin: auto;
 }
 p {
   text-align: center;
 }
-* {
+* { /*centered box with border */
   box-sizing: border-box;
 }
 .center {
@@ -61,6 +62,7 @@ p {
   border: 3px solid #73AD21;
   padding: 10px;
 }
+/* input and textarea styling */
 .contact-form input,
 .contact-form textarea {
   width: 100%;
@@ -74,7 +76,7 @@ p {
   min-height: 150px;
   resize: vertical;
 }
-
+/* centered,styled with green background and hover effect */
 .send-btn {
   margin: 25px auto 0;
   padding: 12px 40px;
@@ -85,7 +87,7 @@ p {
   cursor: pointer;
   border-radius: 4px;
 }
-
+/*Parent container for flex layout*/
 .parent-container {
     display: flex;
     justify-content: flex-start !important;
@@ -95,7 +97,7 @@ p {
 </head>
 <body>
 <div class="header"></div>
-
+<!--Links to main pages of the website-->
 <div id="navbar">
   <a class="active" href="redesine.html">Home</a>
   <a href="OurSerivce.html">Our services</a>
@@ -103,13 +105,15 @@ p {
   <a href="Contact.html">Contact Us</a>
 </div>
 <div class="content">
+  <!--Displays company logo and tagline-->
 <img src="https://img1.wsimg.com/isteam/ip/2b6510c5-0d30-4dc6-8061-a9571f0bb37b/logo/ff38d70c-fbbc-4444-956e-439910f17d3d.png/:/rs=w:967,h:250,cg:true,m/cr=w:967,h:250/qt=q:95" alt="Clash Royale game image" width="400" height="120"/>
 <p><strong>Custom Upholstery & Interior Design</strong></p>
-<img crc="https://img1.wsimg.com/isteam/ip/2b6510c5-0d30-4dc6-8061-a9571f0bb37b/interior%20design%20lilving%20room%20for%20website.jpg/:/" alt="imagething" width="400" height="120"/>
+<!--highlight key services with supporting imagery-->
+<img src="https://cdn.home-designing.com/wp-content/uploads/2014/08/playful-bedroom-decor-1024x577.jpeg" alt="imagething" width="450" height="200"/>
 
 <p><strong>Interior Design, Renovation & Remodeling</strong></p>
 <hr>
-
+<!--includes list of services provided during the project-->
 <div class="center">
   <h5>All of our designs begin with an in-depth meeting to discuss your project and your design needs. This is followed by an in-depth analysis of your space in order to maximize the light, the form and the function. We then draw up a proposal or scope of work encompassing budget, timetable and materials and finishes. Once formally approved, the project is launched and we will be on our way to creating a design that hits all of the right notes.
 
@@ -133,9 +137,11 @@ Depending on the project, this could include:
 
 No project is too large or too small. Come and see us for a consultation on your dream space today!</h5>
 </div>
+<!--encourages visitors to get in touch-->
 <P><stong>Contact Us</stong></P>
 <hr>
 <p><strong>We'd Love To Hear From You!</strong></p>
+<!--allows users to submit inquiries about their projects-->
 <form class="contact-form">
   <label for="name">Name</label>
   <input type="text" id="name" name="name" />

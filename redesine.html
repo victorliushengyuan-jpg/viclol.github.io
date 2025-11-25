@@ -4,27 +4,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"><!-- This Google Fonts make the website more squised-->
 <style>
 body {
   margin: 0;
   font-size: 28px;
   font-family: 'Poppins', Arial, Helvetica, sans-serif;
 }
-
+/*header area at top of the page*/
 .header {
   background-color: #f1f1f1;
   padding: 30px;
   text-align: center;
 }
-
+/* nav bar styling*/
 #navbar {
-  position: sticky;
+  position: sticky; /*make the navigation bar stick to the top when you scroll down*/
   top: 0;
   overflow: hidden;
-  background-color: #333;
-}
-
+  background-color: #333; /*dark bachgoround */
+}/*this section style the navigation bar to be black*/
 #navbar a {
   float: left;
   display: block;
@@ -33,34 +32,34 @@ body {
   padding: 14px 16px;
   text-decoration: none;
   font-size: 17px;
-}
+}/*this section make the navigation bar change color when hover and active*/
 
-#navbar a:hover {
+#navbar a:hover { /* hover effect when mouse is on the link*/
   background-color: #ddd;
   color: black;
 }
 
-#navbar a.active {
+#navbar a.active { /*active link color*/
   background-color: #04AA6D;
   color: white;
-}
+}/*this section make the navigation bar stick to the top when you scroll down*/
 
 .content {
   padding: 16px;
 }
 
-img {
+img { /*center all image*/
   display: block;
   margin: auto;
 }
-p {
+p {/*center all paragraph text*/
   text-align: center;
 }
 * {
   box-sizing: border-box;
-}
+}/*this section make the image in row fit the whole div*/
 
-.column {
+.column { /*make three images in a row*/
   float: left;
   width: 33.33%;
   padding: 5px;
@@ -72,27 +71,28 @@ p {
   clear: both;
   display: table;
 }
-#example1 {
+#example1 { /*big background image section*/
   background-image: url("https://media.istockphoto.com/id/656282962/photo/3d-interior-blank-banners-installation.webp?a=1&s=612x612&w=0&k=20&c=jLmJEa9gGG7BcEl9K1Z36gpDdKKwjVcUMd44EdQjy9Q=");
+
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   padding: 40px;
   color: #000;
   background-color: #ffffff;
-}
+}/*this section make the backgournd image fit the whole div#*/
 
-
+/* center the text in the #example section*/
 #example1 {
   text-align: center;
 }
-* {
+* { /* make elements use border box model*/
   box-sizing: border-box;
 }
-
+/* three coum layout using floats*/
 .column {
   float: left;
-  width: 33.33%;
+  width: 33.33%; /* three equal columns */
   padding: 5px;
 }
 
@@ -103,10 +103,7 @@ p {
   display: table;
 }
 .alignleft {
-	float: left;
-}
-.alignright {
-	float: center;
+	float: left; /*push the element to left*/
 }
 .alignright {
 	float: right;
@@ -127,13 +124,13 @@ p {
   clear: both;
   display: table;
 }
-.services {
+.services { /* flexbox layout fro services section*/
   display: flex;
-  justify-content: space-around; /* or space-evenly */
+  justify-content: space-around; /* spacing-evenly */
   text-align: center;
   width: 100%;
 }
-.contact-form {
+.contact-form { /*center the contact form*/
   width: 100%;
   max-width: 600px;
   margin: 40px auto;
@@ -142,14 +139,14 @@ p {
   font-family: Arial, sans-serif;
 }
 
-.contact-form label {
+.contact-form label { /*sets readble size and color for labels*/
   margin: 15px 0 5px;
   font-size: 16px;
   color: #444;
 }
 
 .contact-form input,
-.contact-form textarea {
+.contact-form textarea { /*gives consistent border and text size */
   width: 100%;
   padding: 12px;
   border: 1px solid #ddd;
@@ -157,12 +154,12 @@ p {
   border-radius: 4px;
 }
 
-.contact-form textarea {
+.contact-form textarea { /*sets minimum height for text area*/
   min-height: 150px;
   resize: vertical;
 }
 
-.send-btn {
+.send-btn { /* style the send button*/
   margin: 25px auto 0;
   padding: 12px 40px;
   background-color: #8aa014; 
@@ -173,10 +170,10 @@ p {
   border-radius: 4px;
 }
 
-.send-btn:hover {
+.send-btn:hover { /*hover effect for send button*/
   background-color: #7c8f12;
 }
-.center {
+.center { /*centered box with border*/
   margin: auto;
   width: 50%;
   border: 3px solid #73AD21;
@@ -189,26 +186,34 @@ p {
 </head>
 <body>
 <div class="header"></div>
-
+<!--link to the main pages for my website-->
+<!--home link is marked as active-->
 <div id="navbar">
   <a class="active" href="redesine.html">Home</a>
   <a href="OurSerivce.html">Our services</a>
   <a href="About us.html">About Us</a>
-  <a href="Contact.html">Contact Us</a>
+  <a href="Contact.html">Contact Us</a><!-- Navigation bar that link to different pages-->
 </div>
+<!--display logo-->
 <div class="content">
+  <!--loga image-->
 <img src="https://img1.wsimg.com/isteam/ip/2b6510c5-0d30-4dc6-8061-a9571f0bb37b/logo/ff38d70c-fbbc-4444-956e-439910f17d3d.png/:/rs=w:967,h:250,cg:true,m/cr=w:967,h:250/qt=q:95" alt="Clash Royale game image" width="400" height="120"/>
-<p>Custom Upholstery & Interior Design</p>
+<!--slogan text-->
+<p>Custom Upholstery & Interior Design</p><!-- Logo image and slogan-->
+<!--display 3 interior design images side by side-->
 <div class="row">
+  <!--first image column-->
   <div class="column">
-    <img src="https://img1.wsimg.com/isteam/ip/2b6510c5-0d30-4dc6-8061-a9571f0bb37b/interior%20design%20lilving%20room%20for%20website.jpg/:/cr=t:0%25,l:2.27%25,w:95.46%25,h:100%25/rs=w:776,h:388,cg:true" alt="Snow" style="width:100%">
+    <img src="https://www.thespruce.com/thmb/AAN4B4iACg9ltGvZOzDz81I_RWU=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/lavender2-dd461d67ee8240d5bbca3e0b09e9c41c.png" alt="Snow" style="width:100%">
   </div>
+  <!--second image column-->
   <div class="column">
-    <img src="https://img1.wsimg.com/isteam/ip/2b6510c5-0d30-4dc6-8061-a9571f0bb37b/AdobeStock_72005717.jpeg/:/cr=t:12.51%25,l:0%25,w:100%25,h:74.99%25/rs=w:776,h:388,cg:true" alt="Forest" style="width:100%">
+    <img src="https://st.hzcdn.com/simgs/689129a00e39bfcd_14-6298/home-design.jpg" alt="Forest" style="width:100%">
   </div>
+  <!--thirs image column-->
   <div class="column">
-    <img src="https://img1.wsimg.com/isteam/ip/2b6510c5-0d30-4dc6-8061-a9571f0bb37b/AdobeStock_212496782.jpeg/:/cr=t:25.01%25,l:0%25,w:100%25,h:74.99%25/rs=w:776,h:388,cg:true" alt="Mountains" style="width:100%">
-  </div>
+    <img src="https://www.thespruce.com/thmb/WQdt9HXB78tKg5U5eITP4ZUlYcA=/2500x0/filters:no_upscale():max_bytes(150000):strip_icc()/PAinteriors-7-cafe9c2bd6be4823b9345e591e4f367f.jpg" alt="Mountains" style="width:100%">
+  </div><!-- This section show three images in a row-->
 </div>
 <div id="example1">
   <h1>Let us bring your ideas to life!</h1>
@@ -222,7 +227,7 @@ We plan residential and commercial spaces that are refreshingly unique while sti
 Our services include: Interior space planning, Renovation & Re-modelling, Custom Upholstery & Finishing; and a retail store in which to find that last finishing detail. Whether your project is large or small, we look forward to working together.
 
 There's much to see here. So, take your time, look around, and learn all there is to know about us. We hope you enjoy our site and take a moment to drop us a line.</p>
-</div>
+</div><!--this section is the contant in middle-->
 <p><strong>Our Serivce</strong></p>
 <div class="row">
 <div class="row">
@@ -234,8 +239,9 @@ There's much to see here. So, take your time, look around, and learn all there i
   </div>
   <div class="column">
     <img src="https://www.marthastewart.com/thmb/15iXaMg1eMLepvec7GZBZ5wj7ec=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/small-bedroom-ideas-kerrie-kelly-design-lab-02-2daf29e369b14973ba523e69d556f8f3.jpg" alt="Mountains" style="width:100%">
-  </div>
-</div>
+  </div><!-- end of three column image section-->
+</div><!--end of main content-->
+<!--shows a list of main services offered-->
 <div id="textbox" style="
   display: flex;
   justify-content: space-between;
@@ -246,6 +252,7 @@ There's much to see here. So, take your time, look around, and learn all there i
   <div><strong>Retail Store</strong></div>
 </div>
 </div>
+<!--display three image side by side using the column layout-->
 <div class="row">
   <div class="column">
     <img src="https://img1.wsimg.com/isteam/ip/2b6510c5-0d30-4dc6-8061-a9571f0bb37b/interior%20design%20lilving%20room%20for%20website.jpg/:/cr=t:0%25,l:2.27%25,w:95.46%25,h:100%25/rs=w:776,h:388,cg:true" alt="Snow" style="width:100%">
@@ -257,7 +264,7 @@ There's much to see here. So, take your time, look around, and learn all there i
     <img src="https://img1.wsimg.com/isteam/ip/2b6510c5-0d30-4dc6-8061-a9571f0bb37b/AdobeStock_212496782.jpeg/:/cr=t:25.01%25,l:0%25,w:100%25,h:74.99%25/rs=w:776,h:388,cg:true" alt="Mountains" style="width:100%">
   </div>
 </div>
-
+<!--allows visitors to submiy inquiries abot their projects-->
 <div id="example1">
   <h1>Transfer Your Space Today</h1>
 </div>
@@ -273,15 +280,17 @@ There's much to see here. So, take your time, look around, and learn all there i
 
   <button type="submit" class="send-btn">SEND</button>
 </form>
+<!--display reaction notive-->
 <div class="center">
   <h5>This site is protected by recaptcha and the Google Privacy Policy and Terms of Service apply.</h5>
 </div>
-</div>
+<!--encourages vistors to send a message-->
 <div id="example1">
   <h4>We can help!
 Do you have a question about a project?
 Send us a message, and we'll get back to you with answers ASAP.</h4>
 </div>
+<!--use flexbox to space items evenly-->
 <div id="textbox" style="
   display: flex;
   justify-content: space-between;
@@ -299,6 +308,7 @@ Send us a message, and we'll get back to you with answers ASAP.</h4>
   <div><strong>Sunday & Monday: Closed</strong></div>
 </div>
 </div>
+<!--displays customer reviews in three coluns and show image of screenshots to show feedback-->
 <p><strong>Reviews</strong></p>
 <div class="row">
   <div class="column">

@@ -3,19 +3,19 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body {
+body { /* Set default font, margin, box-sizing */
   margin: 0;
   font-size: 28px;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.header {
+.header { /*top header section*/
   background-color: #f1f1f1;
   padding: 30px;
   text-align: center;
 }
 
-#navbar {
+#navbar { /*  Sticky top navbar with links and hover/active effects */
   position: sticky;
   top: 0;
   overflow: hidden;
@@ -41,7 +41,7 @@ body {
   background-color: #04AA6D;
   color: white;
 }
-.content {
+.content { /* image text and oaragraphs padding*/
   padding: 16px;
 }
 
@@ -55,7 +55,7 @@ p {
 * {
   box-sizing: border-box;
 }
-.contact-form label {
+.contact-form label { /* Labels, inputs, textarea, and submit button styling */
   margin: 15px 0 5px;
   font-size: 16px;
   color: #444;
@@ -86,7 +86,7 @@ p {
   border-radius: 4px;
 }
 
-.parent-container {
+.parent-container { /* optional container for layout alignment*/
     display: flex;
     justify-content: flex-start !important;
     align-items: flex-start !important;
@@ -95,19 +95,21 @@ p {
 </head>
 <body>
 <div class="header"></div>
-
+<!--navigation bar section Sticky navbar with links to different pages-->
 <div id="navbar">
   <a class="active" href="redesine.html">Home</a>
   <a href="OurSerivce.html">Our services</a>
   <a href="About us.html">About Us</a>
   <a href="Contact.html">Contact Us</a>
 </div>
+<!--main content section.Logo image, tagline, and page heading-->
 <div class="content">
 <img src="https://img1.wsimg.com/isteam/ip/2b6510c5-0d30-4dc6-8061-a9571f0bb37b/logo/ff38d70c-fbbc-4444-956e-439910f17d3d.png/:/rs=w:967,h:250,cg:true,m/cr=w:967,h:250/qt=q:95" alt="Clash Royale game image" width="400" height="120"/>
 <p>Custom Upholstery & Interior Design</p>
 <h4>Contact us</h4>
 <hr>
 <h5>We Can't Wait To Hear From You!</h5>
+<!--Collects user's name, email, and project details-->
 <form class="contact-form">
   <label for="name">Name</label>
   <input type="text" id="name" name="name" />
