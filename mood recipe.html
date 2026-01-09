@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MoodRecipe</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7f6;
+    text-align: center;
+}
+
+header {
+    background: #6bc4a3;
+    color: white;
+    padding: 25px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 32px;
+}
+
+section {
+    background: white;
+    margin: 25px auto;
+    padding: 20px;
+    border-radius: 15px;
+    max-width: 600px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+button {
+    padding: 12px 20px;
+    margin: 6px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    background: #ffb703;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #fb8500;
+    color: white;
+}
+
+.card {
+    background: #f9f9f9;
+    margin: 10px auto;
+    padding: 12px 18px;
+    border-radius: 12px;
+    max-width: 420px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+    text-align: left;
+}
+
+/* Recipe link styling */
+.card a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+.card a:hover {
+    color: #fb8500;
+    text-decoration: underline;
+}
+
+#loading {
+    display: none;
+    font-size: 18px;
+    color: #6bc4a3;
+    margin-top: 10px;
+}
+
+footer {
+    background: #333;
+    color: white;
+    padding: 12px;
+    margin-top: 30px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🍽️ MoodRecipe</h1>
+    <p>Find food and restaurants based on your mood</p>
+</header>
+
+<section>
+    <h2>📍 Location</h2>
+    <button onclick="getLocation()">Detect My Location</button>
+    <p id="locationText">Location not detected yet.</p>
+</section>
+
+<section>
+    <h2>😊 How Are You Feeling?</h2>
+
+    <button onclick="showOptions('happy')">Happy</button>
+    <button onclick="showOptions('sad')">Sad</button>
+    <button onclick="showOptions('tired')">Tired</button>
+    <button onclick="showOptions('stressed')">Stressed</button>
+    <button onclick="showOptions('bored')">Bored</button>
+
+    <div id="loading">🔍 Searching...</div>
+
+    <div id="recipeResults"></div>
+    <div id="restaurantResults"></div>
+</section>
+
+<footer>
+    Powered by Geoapify / OpenStreetMap
+</footer>
+
+<script>
+// =======================
+// CONFIG
+// =======================
+const geoApiKey = "84f2d835ca2048dc86789c4475ede22b";
+
+// =======================
+// LOCATION
+// =======================
+let userLat = null;
+let userLon = null;
+
+function getLocation() {
+    const text = document.getElementById("locationText");
+
+    if (!navigator.geolocation) {
+        text.innerText = "Geolocation not supported.";
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        pos => {
+            userLat = pos.coords.latitude;
+            userLon = pos.coords.longitude;
+            text.innerText = "Location detected ✔";
+        },
+        () => {
+            text.innerText = "Location denied. Showing example restaurants.";
+        }
+    );
+}
+
+// =======================
+// DATA
+// =======================
+const moods = {
+    happy: [
+        "Rainbow tacos 🌮",
+        "Fruit smoothie 🍓",
+        "Grilled chicken wrap 🥙",
+        "Fresh salad 🥗",
+        "Yogurt parfait 🍨"
+    ],
+    sad: [
+        "Chocolate pancakes 🥞",
+        "Warm soup 🍲",
+        "Mac & cheese 🧀",
+        "Toast with jam 🍞",
+        "Hot cocoa ☕"
+    ],
+    tired: [
+        "Avocado toast 🥑",
+        "Scrambled eggs 🍳",
+        "Protein smoothie 🥤",
+        "Energy bowl 🥣",
+        "Banana oatmeal 🍌"
+    ],
+    stressed: [
+        "Vegetable soup 🍵",
+        "Spinach pasta 🍝",
+        "Green salad 🥗",
+        "Herbal tea ☕",
+        "Rice bowl 🍚"
+    ],
+    bored: [
+        "DIY sushi 🍣",
+        "Mini pizza 🍕",
+        "Loaded sandwiches 🥪",
+        "Build-your-own tacos 🌮",
+        "Popcorn snacks 🍿"
+    ]
+};
+
+// =======================
+// UTIL
+// =======================
+function shuffle(arr) {
+    return arr.sort(() => 0.5 - Math.random());
+}
+
+function recipeLink(recipeName) {
+    const cleanName = recipeName.replace(/[^\w\s]/gi, "").trim();
+    return `https://www.google.com/search?q=${encodeURIComponent(cleanName + " recipe")}`;
+}
+
+// =======================
+// MAIN LOGIC
+// =======================
+async function showOptions(mood) {
+    const recipesDiv = document.getElementById("recipeResults");
+    const restaurantsDiv = document.getElementById("restaurantResults");
+    const loading = document.getElementById("loading");
+
+    recipesDiv.innerHTML = "";
+    restaurantsDiv.innerHTML = "";
+    loading.style.display = "block";
+
+    setTimeout(async () => {
+        loading.style.display = "none";
+
+        // Recipes
+        recipesDiv.innerHTML = "<h3>🍽️ Recipe Options</h3>";
+        shuffle(moods[mood]).slice(0, 3).forEach(item => {
+            recipesDiv.innerHTML += `
+                <div class="card">
+                    • <a href="${recipeLink(item)}" target="_blank">
+                        ${item}
+                      </a>
+                </div>
+            `;
+        });
+
+        // Restaurants
+        restaurantsDiv.innerHTML = "<h3>🏪 Nearby Restaurants</h3>";
+
+        if (userLat && userLon) {
+            try {
+                const res = await fetch(
+                    `https://api.geoapify.com/v2/places?categories=catering.restaurant&filter=circle:${userLon},${userLat},1200&limit=5&apiKey=${geoApiKey}`
+                );
+                const data = await res.json();
+
+                data.features.forEach(place => {
+                    restaurantsDiv.innerHTML +=
+                        `<div class="card">• ${place.properties.name}</div>`;
+                });
+
+            } catch {
+                restaurantsDiv.innerHTML += "<div class='card'>Unable to load restaurants.</div>";
+            }
+        } else {
+            restaurantsDiv.innerHTML += "<div class='card'>Example Restaurant 1</div>";
+            restaurantsDiv.innerHTML += "<div class='card'>Example Restaurant 2</div>";
+            restaurantsDiv.innerHTML += "<div class='card'>Example Restaurant 3</div>";
+        }
+    }, 1200);
+}
+</script>
+
+</body>
+</html>

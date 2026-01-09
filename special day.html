@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        let day = Number(prompt("Enter Day:"));
+        let month = Number(prompt("Enter Month:"));
+    if (month === 2 && day === 18) {
+        console.log("Special");
+    }
+    if (month < 2 || (month === 2 && day < 18)) {
+        console.log("Before");
+    } else if (month > 2 || (month === 2 && day > 18)) {
+        console.log("After");
+    } else if (month === 2 && day > 18) {
+        console.log("after");
+    } else if (month === 2 && day < 18) {
+        console.log("before");
+    }
+</script>
+</head>
+<body>
+</body>
+</html>
+
