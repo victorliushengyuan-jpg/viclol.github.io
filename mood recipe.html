@@ -18,11 +18,6 @@ header {
     padding: 25px;
 }
 
-header h1 {
-    margin: 0;
-    font-size: 32px;
-}
-
 section {
     background: white;
     margin: 25px auto;
@@ -40,7 +35,6 @@ button {
     font-size: 16px;
     cursor: pointer;
     background: #ffb703;
-    transition: 0.3s;
 }
 
 button:hover {
@@ -58,23 +52,31 @@ button:hover {
     text-align: left;
 }
 
-/* Recipe link styling */
 .card a {
     text-decoration: none;
     color: #333;
     font-weight: bold;
 }
 
-.card a:hover {
-    color: #fb8500;
-    text-decoration: underline;
+.allergens {
+    display: block;
+    font-size: 14px;
+    color: #d9534f;
+    margin-top: 4px;
 }
 
 #loading {
     display: none;
     font-size: 18px;
     color: #6bc4a3;
-    margin-top: 10px;
+}
+
+.allergen-filters {
+    margin: 10px 0;
+    text-align: left;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 footer {
@@ -108,9 +110,21 @@ footer {
     <button onclick="showOptions('stressed')">Stressed</button>
     <button onclick="showOptions('bored')">Bored</button>
 
+    <div class="allergen-filters">
+        <label><input type="checkbox" value="nuts" onchange="applyAllergenFilter()"> Nuts 🌰</label>
+        <label><input type="checkbox" value="milk" onchange="applyAllergenFilter()"> Milk 🥛</label>
+        <label><input type="checkbox" value="fish" onchange="applyAllergenFilter()"> Fish 🐟</label>
+        <label><input type="checkbox" value="eggs" onchange="applyAllergenFilter()"> Eggs 🥚</label>
+        <label><input type="checkbox" value="crustacean" onchange="applyAllergenFilter()"> Crustacean 🦐</label>
+        <label><input type="checkbox" value="wheat" onchange="applyAllergenFilter()"> Wheat 🌾</label>
+        <label><input type="checkbox" value="gluten" onchange="applyAllergenFilter()"> Gluten 🌾</label>
+    </div>
+
     <div id="loading">🔍 Searching...</div>
 
     <div id="recipeResults"></div>
+    <button id="moreRecipesBtn" style="display:none;" onclick="showMoreRecipes()">➕ Show More Recipes</button>
+
     <div id="restaurantResults"></div>
 </section>
 
@@ -120,23 +134,36 @@ footer {
 
 <script>
 // =======================
-// CONFIG
+// CONFIG & STATE
 // =======================
 const geoApiKey = "84f2d835ca2048dc86789c4475ede22b";
+let userLat = null;
+let userLon = null;
+
+let currentMood = null;
+let recipeIndex = 0;
+let shuffledRecipes = [];
+let filteredRecipes = [];
+const RECIPES_PER_LOAD = 3;
+
+// Allergens emojis
+const allergenEmojis = {
+    nuts: "🌰",
+    milk: "🥛",
+    fish: "🐟",
+    eggs: "🥚",
+    crustacean: "🦐",
+    wheat: "🌾",
+    gluten: "🌾"
+};
+
+let activeAllergens = []; // selected filters
 
 // =======================
 // LOCATION
 // =======================
-let userLat = null;
-let userLon = null;
-
 function getLocation() {
     const text = document.getElementById("locationText");
-
-    if (!navigator.geolocation) {
-        text.innerText = "Geolocation not supported.";
-        return;
-    }
 
     navigator.geolocation.getCurrentPosition(
         pos => {
@@ -145,115 +172,203 @@ function getLocation() {
             text.innerText = "Location detected ✔";
         },
         () => {
-            text.innerText = "Location denied. Showing example restaurants.";
+            text.innerText = "Location denied.";
         }
     );
 }
 
 // =======================
-// DATA
+// DATA (recipes with allergens)
 // =======================
 const moods = {
     happy: [
-        "Rainbow tacos 🌮",
-        "Fruit smoothie 🍓",
-        "Grilled chicken wrap 🥙",
-        "Fresh salad 🥗",
-        "Yogurt parfait 🍨"
+        {name:"Rainbow tacos 🌮", allergens: []},
+        {name:"Fruit smoothie 🍓", allergens:["milk"]},
+        {name:"Grilled chicken wrap 🥙", allergens: ["gluten","wheat"]},
+        {name:"Fresh salad 🥗", allergens: []},
+        {name:"Yogurt parfait 🍨", allergens: ["milk","nuts"]},
+        {name:"Mango salsa bowl 🥭", allergens: []},
+        {name:"Chicken Caesar wrap 🐔", allergens: ["gluten","milk","wheat"]},
+        {name:"Veggie burrito 🌯", allergens: ["gluten","wheat"]},
+        {name:"Pasta primavera 🍝", allergens: ["gluten","wheat"]},
+        {name:"Berry pancakes 🫐", allergens: ["gluten","milk","eggs","wheat"]},
+        {name:"Falafel pita 🧆", allergens: ["gluten","nuts","wheat"]},
+        {name:"Caprese sandwich 🧀", allergens: ["milk","gluten","wheat"]},
+        {name:"Shrimp tacos 🍤", allergens: ["fish","gluten","crustacean","wheat"]},
+        {name:"Lemon rice 🍋", allergens: []},
+        {name:"Smoothie bowl 🍌", allergens:["milk","nuts"]}
     ],
+    // Repeat for sad, tired, stressed, bored (same structure as before)...
     sad: [
-        "Chocolate pancakes 🥞",
-        "Warm soup 🍲",
-        "Mac & cheese 🧀",
-        "Toast with jam 🍞",
-        "Hot cocoa ☕"
+        {name:"Chocolate pancakes 🥞", allergens:["gluten","milk","eggs","wheat"]},
+        {name:"Warm soup 🍲", allergens:[]},
+        {name:"Mac & cheese 🧀", allergens:["gluten","milk","wheat"]},
+        {name:"Toast with jam 🍞", allergens:["gluten","wheat"]},
+        {name:"Hot cocoa ☕", allergens:["milk"]},
+        {name:"Mashed potatoes 🥔", allergens:["milk"]},
+        {name:"Grilled cheese 🧈", allergens:["gluten","milk","wheat"]},
+        {name:"Ramen noodles 🍜", allergens:["gluten","fish","wheat"]},
+        {name:"Chicken pot pie 🥧", allergens:["gluten","milk","eggs","wheat"]},
+        {name:"Baked ziti 🍝", allergens:["gluten","milk","wheat"]},
+        {name:"Brownies 🍫", allergens:["gluten","milk","nuts","eggs","wheat"]},
+        {name:"Creamy risotto 🍚", allergens:["milk"]},
+        {name:"French toast 🍞", allergens:["gluten","milk","eggs","wheat"]},
+        {name:"Chili stew 🌶️", allergens:[]},
+        {name:"Rice pudding 🍮", allergens:["milk","eggs"]}
     ],
     tired: [
-        "Avocado toast 🥑",
-        "Scrambled eggs 🍳",
-        "Protein smoothie 🥤",
-        "Energy bowl 🥣",
-        "Banana oatmeal 🍌"
+        {name:"Avocado toast 🥑", allergens:["gluten","nuts","wheat"]},
+        {name:"Scrambled eggs 🍳", allergens:["eggs","milk"]},
+        {name:"Protein smoothie 🥤", allergens:["milk","nuts"]},
+        {name:"Energy bowl 🥣", allergens:["nuts"]},
+        {name:"Banana oatmeal 🍌", allergens:["gluten","nuts","wheat"]},
+        {name:"Greek yogurt 🍶", allergens:["milk"]},
+        {name:"Peanut butter toast 🥜", allergens:["gluten","nuts","wheat"]},
+        {name:"Egg sandwich 🥪", allergens:["gluten","eggs","milk","wheat"]},
+        {name:"Breakfast burrito 🌯", allergens:["gluten","eggs","wheat"]},
+        {name:"Overnight oats 🌾", allergens:["gluten","milk","nuts","wheat"]},
+        {name:"Trail mix 🥜", allergens:["nuts"]},
+        {name:"Cottage cheese 🍶", allergens:["milk"]},
+        {name:"Hard-boiled eggs 🥚", allergens:["eggs"]},
+        {name:"Granola bar 🍯", allergens:["gluten","nuts","wheat"]},
+        {name:"Green smoothie 🥬", allergens:[]}
     ],
     stressed: [
-        "Vegetable soup 🍵",
-        "Spinach pasta 🍝",
-        "Green salad 🥗",
-        "Herbal tea ☕",
-        "Rice bowl 🍚"
+        {name:"Vegetable soup 🍵", allergens:[]},
+        {name:"Spinach pasta 🍝", allergens:["gluten","wheat"]},
+        {name:"Green salad 🥗", allergens:[]},
+        {name:"Herbal tea ☕", allergens:[]},
+        {name:"Rice bowl 🍚", allergens:[]},
+        {name:"Miso soup 🍲", allergens:["fish"]},
+        {name:"Steamed veggies 🥦", allergens:[]},
+        {name:"Quinoa bowl 🌾", allergens:[]},
+        {name:"Baked salmon 🐟", allergens:["fish"]},
+        {name:"Tofu stir-fry 🍜", allergens:[]},
+        {name:"Chamomile tea 🌼", allergens:[]},
+        {name:"Roasted sweet potato 🍠", allergens:[]},
+        {name:"Lentil soup 🫘", allergens:[]},
+        {name:"Brown rice & veggies 🍛", allergens:[]},
+        {name:"Cucumber salad 🥒", allergens:[]}
     ],
     bored: [
-        "DIY sushi 🍣",
-        "Mini pizza 🍕",
-        "Loaded sandwiches 🥪",
-        "Build-your-own tacos 🌮",
-        "Popcorn snacks 🍿"
+        {name:"DIY sushi 🍣", allergens:["fish"]},
+        {name:"Mini pizza 🍕", allergens:["gluten","milk","wheat"]},
+        {name:"Loaded sandwiches 🥪", allergens:["gluten","milk","wheat"]},
+        {name:"Build-your-own tacos 🌮", allergens:["gluten","wheat"]},
+        {name:"Popcorn snacks 🍿", allergens:[]},
+        {name:"Nachos 🧀", allergens:["milk"]},
+        {name:"Quesadillas 🌯", allergens:["gluten","milk","wheat"]},
+        {name:"Sliders 🍔", allergens:["gluten","wheat"]},
+        {name:"Flatbread pizza 🍕", allergens:["gluten","milk","wheat"]},
+        {name:"Stuffed peppers 🌶️", allergens:[]},
+        {name:"Spring rolls 🥬", allergens:["gluten","wheat"]},
+        {name:"Fried rice 🍚", allergens:[]},
+        {name:"Pasta bake 🍝", allergens:["gluten","milk","wheat"]},
+        {name:"Chicken wraps 🐔", allergens:["gluten","wheat"]},
+        {name:"Snack platter 🧀", allergens:["milk"]}
     ]
 };
 
 // =======================
-// UTIL
+// UTIL & FILTER
 // =======================
-function shuffle(arr) {
-    return arr.sort(() => 0.5 - Math.random());
+function shuffleArray(array){return [...array].sort(()=>0.5-Math.random());}
+function recipeLink(recipe){return `https://www.google.com/search?q=${encodeURIComponent(recipe.replace(/[^\w\s]/gi,""))} recipe`;}
+function addCard(container, html){container.innerHTML+=`<div class="card">${html}</div>`;}
+
+function applyAllergenFilter(){
+    activeAllergens = Array.from(document.querySelectorAll('.allergen-filters input:checked')).map(i=>i.value);
+    if(!currentMood) return;
+    recipeIndex=0;
+    filteredRecipes = shuffledRecipes.filter(r=>!r.allergens.some(a=>activeAllergens.includes(a)));
+    document.getElementById("recipeResults").innerHTML="";
+    showRecipesFiltered();
 }
 
-function recipeLink(recipeName) {
-    const cleanName = recipeName.replace(/[^\w\s]/gi, "").trim();
-    return `https://www.google.com/search?q=${encodeURIComponent(cleanName + " recipe")}`;
+function showRecipesFiltered(){
+    const container = document.getElementById("recipeResults");
+    const moreBtn = document.getElementById("moreRecipesBtn");
+    const next = filteredRecipes.slice(recipeIndex, recipeIndex+RECIPES_PER_LOAD);
+
+    if(recipeIndex===0) container.innerHTML="<h3>🍽️ Recipe Options</h3>";
+
+    next.forEach(r=>{
+        const allergenDisplay = r.allergens.map(a=>allergenEmojis[a]).join(" ");
+        addCard(container,
+            `<a href="${recipeLink(r.name)}" target="_blank">${r.name}</a>`+
+            (allergenDisplay?`<span class="allergens">${allergenDisplay}</span>`:"")
+        );
+    });
+
+    recipeIndex += RECIPES_PER_LOAD;
+    moreBtn.style.display = recipeIndex<filteredRecipes.length?"inline-block":"none";
+}
+
+function showMoreRecipes(){ activeAllergens.length?showRecipesFiltered():showRecipes(); }
+
+function showRecipes(){
+    const container=document.getElementById("recipeResults");
+    const moreBtn=document.getElementById("moreRecipesBtn");
+    if(recipeIndex===0) container.innerHTML="<h3>🍽️ Recipe Options</h3>";
+    const next=shuffledRecipes.slice(recipeIndex,recipeIndex+RECIPES_PER_LOAD);
+    next.forEach(r=>{
+        const allergenDisplay=r.allergens.map(a=>allergenEmojis[a]).join(" ");
+        addCard(container,
+            `<a href="${recipeLink(r.name)}" target="_blank">${r.name}</a>`+
+            (allergenDisplay?`<span class="allergens">${allergenDisplay}</span>`:"")
+        );
+    });
+    recipeIndex+=RECIPES_PER_LOAD;
+    moreBtn.style.display=recipeIndex<shuffledRecipes.length?"inline-block":"none";
 }
 
 // =======================
-// MAIN LOGIC
+// RESTAURANTS
 // =======================
-async function showOptions(mood) {
-    const recipesDiv = document.getElementById("recipeResults");
-    const restaurantsDiv = document.getElementById("restaurantResults");
-    const loading = document.getElementById("loading");
+function calculateDistance(lat1,lon1,lat2,lon2){
+    const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;
+    const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+    return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
 
-    recipesDiv.innerHTML = "";
-    restaurantsDiv.innerHTML = "";
-    loading.style.display = "block";
-
-    setTimeout(async () => {
-        loading.style.display = "none";
-
-        // Recipes
-        recipesDiv.innerHTML = "<h3>🍽️ Recipe Options</h3>";
-        shuffle(moods[mood]).slice(0, 3).forEach(item => {
-            recipesDiv.innerHTML += `
-                <div class="card">
-                    • <a href="${recipeLink(item)}" target="_blank">
-                        ${item}
-                      </a>
-                </div>
-            `;
+async function showRestaurants(container){
+    container.innerHTML="<h3>🏪 Nearby Restaurants</h3>";
+    if(!userLat||!userLon){addCard(container,"📍 Please enable location to see nearby restaurants."); return;}
+    try{
+        const res=await fetch(`https://api.geoapify.com/v2/places?categories=catering.restaurant&filter=circle:${userLon},${userLat},1500&limit=8&apiKey=${geoApiKey}`);
+        const data=await res.json();
+        if(!data.features.length) addCard(container,"No nearby restaurants found.");
+        data.features.forEach(place=>{
+            if(!place.properties.name) return;
+            const [lon,lat]=place.geometry.coordinates;
+            const mapsUrl=`https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+            const distance=calculateDistance(userLat,userLon,lat,lon).toFixed(2);
+            addCard(container,`<a href="${mapsUrl}" target="_blank">${place.properties.name}</a><br><small>📍 ${distance} km away</small>`);
         });
+    }catch{addCard(container,"Unable to load restaurants.");}
+}
 
-        // Restaurants
-        restaurantsDiv.innerHTML = "<h3>🏪 Nearby Restaurants</h3>";
+// =======================
+// MAIN
+// =======================
+function showOptions(mood){
+    const loading=document.getElementById("loading");
+    const restaurantDiv=document.getElementById("restaurantResults");
 
-        if (userLat && userLon) {
-            try {
-                const res = await fetch(
-                    `https://api.geoapify.com/v2/places?categories=catering.restaurant&filter=circle:${userLon},${userLat},1200&limit=5&apiKey=${geoApiKey}`
-                );
-                const data = await res.json();
+    currentMood=mood;
+    recipeIndex=0;
+    shuffledRecipes=shuffleArray(moods[mood]);
+    filteredRecipes=[];
 
-                data.features.forEach(place => {
-                    restaurantsDiv.innerHTML +=
-                        `<div class="card">• ${place.properties.name}</div>`;
-                });
+    document.getElementById("recipeResults").innerHTML="";
+    restaurantDiv.innerHTML="";
+    loading.style.display="block";
 
-            } catch {
-                restaurantsDiv.innerHTML += "<div class='card'>Unable to load restaurants.</div>";
-            }
-        } else {
-            restaurantsDiv.innerHTML += "<div class='card'>Example Restaurant 1</div>";
-            restaurantsDiv.innerHTML += "<div class='card'>Example Restaurant 2</div>";
-            restaurantsDiv.innerHTML += "<div class='card'>Example Restaurant 3</div>";
-        }
-    }, 1200);
+    setTimeout(async()=>{
+        loading.style.display="none";
+        applyAllergenFilter(); // applies filter if any selected
+        await showRestaurants(restaurantDiv);
+    },800);
 }
 </script>
 
