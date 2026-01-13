@@ -5,85 +5,108 @@
 <title>MoodRecipe</title>
 
 <style>
+:root {
+    --bg:#f4f7f6;
+    --card:#ffffff;
+    --text:#222;
+    --accent:#6bc4a3;
+    --button:#ffb703;
+    --button-hover:#fb8500;
+}
+body.dark {
+    --bg:#121212;
+    --card:#1f1f1f;
+    --text:#eaeaea;
+    --accent:#3aa88b;
+}
+
 body {
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f4f7f6;
-    text-align: center;
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    text-align:center;
+    transition:.3s;
 }
-
 header {
-    background: #6bc4a3;
-    color: white;
-    padding: 25px;
+    background:var(--accent);
+    color:white;
+    padding:25px;
+    position:relative;
 }
-
+.toggle {
+    position:absolute;
+    top:15px;
+    right:15px;
+    background:rgba(255,255,255,.25);
+    padding:8px 14px;
+    border-radius:20px;
+    cursor:pointer;
+}
 section {
-    background: white;
-    margin: 25px auto;
-    padding: 20px;
-    border-radius: 15px;
-    max-width: 600px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    background:var(--card);
+    margin:25px auto;
+    padding:20px;
+    border-radius:15px;
+    max-width:600px;
+    box-shadow:0 4px 10px rgba(0,0,0,.15);
 }
-
 button {
-    padding: 12px 20px;
-    margin: 6px;
-    border: none;
-    border-radius: 25px;
-    font-size: 16px;
-    cursor: pointer;
-    background: #ffb703;
+    padding:12px 20px;
+    margin:6px;
+    border:none;
+    border-radius:25px;
+    font-size:16px;
+    cursor:pointer;
+    background:var(--button);
 }
-
 button:hover {
-    background: #fb8500;
-    color: white;
+    background:var(--button-hover);
+    color:white;
 }
-
 .card {
-    background: #f9f9f9;
-    margin: 10px auto;
-    padding: 12px 18px;
-    border-radius: 12px;
-    max-width: 420px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.08);
-    text-align: left;
+    background:var(--card);
+    margin:15px auto;
+    padding:12px;
+    border-radius:12px;
+    max-width:420px;
+    box-shadow:0 3px 6px rgba(0,0,0,.2);
+    text-align:left;
+    overflow:hidden;
 }
-
+.card img {
+    width:100%;
+    height:160px;
+    object-fit:cover;
+    border-radius:10px;
+    margin-bottom:8px;
+}
 .card a {
-    text-decoration: none;
-    color: #333;
-    font-weight: bold;
+    text-decoration:none;
+    color:var(--text);
+    font-weight:bold;
+    display:block;
 }
-
 .allergens {
-    display: block;
-    font-size: 14px;
-    color: #d9534f;
-    margin-top: 4px;
+    font-size:14px;
+    color:#ff6b6b;
+    margin-top:4px;
+    display:block;
 }
-
 #loading {
-    display: none;
-    font-size: 18px;
-    color: #6bc4a3;
+    display:none;
+    color:var(--accent);
 }
-
 .allergen-filters {
-    margin: 10px 0;
-    text-align: left;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+    text-align:left;
+    max-width:600px;
+    margin:10px auto;
 }
-
 footer {
-    background: #333;
-    color: white;
-    padding: 12px;
-    margin-top: 30px;
+    background:#222;
+    color:white;
+    padding:12px;
+    margin-top:30px;
 }
 </style>
 </head>
@@ -91,6 +114,7 @@ footer {
 <body>
 
 <header>
+    <div class="toggle" onclick="toggleDarkMode()">🌙 Dark</div>
     <h1>🍽️ MoodRecipe</h1>
     <p>Find food and restaurants based on your mood</p>
 </header>
@@ -111,12 +135,12 @@ footer {
     <button onclick="showOptions('bored')">Bored</button>
 
     <div class="allergen-filters">
-        <label><input type="checkbox" value="nuts" onchange="applyAllergenFilter()"> Nuts 🌰</label>
-        <label><input type="checkbox" value="milk" onchange="applyAllergenFilter()"> Milk 🥛</label>
-        <label><input type="checkbox" value="fish" onchange="applyAllergenFilter()"> Fish 🐟</label>
-        <label><input type="checkbox" value="eggs" onchange="applyAllergenFilter()"> Eggs 🥚</label>
-        <label><input type="checkbox" value="crustacean" onchange="applyAllergenFilter()"> Crustacean 🦐</label>
-        <label><input type="checkbox" value="wheat" onchange="applyAllergenFilter()"> Wheat 🌾</label>
+        <label><input type="checkbox" value="nuts" onchange="applyAllergenFilter()"> Nuts 🌰</label><br>
+        <label><input type="checkbox" value="milk" onchange="applyAllergenFilter()"> Milk 🥛</label><br>
+        <label><input type="checkbox" value="fish" onchange="applyAllergenFilter()"> Fish 🐟</label><br>
+        <label><input type="checkbox" value="eggs" onchange="applyAllergenFilter()"> Eggs 🥚</label><br>
+        <label><input type="checkbox" value="crustacean" onchange="applyAllergenFilter()"> Crustacean 🦐</label><br>
+        <label><input type="checkbox" value="wheat" onchange="applyAllergenFilter()"> Wheat 🌾</label><br>
         <label><input type="checkbox" value="gluten" onchange="applyAllergenFilter()"> Gluten 🌾</label>
     </div>
 
@@ -134,241 +158,148 @@ footer {
 
 <script>
 // =======================
-// CONFIG & STATE
+// DARK MODE
 // =======================
-const geoApiKey = "84f2d835ca2048dc86789c4475ede22b";
-let userLat = null;
-let userLon = null;
+function toggleDarkMode(){
+    document.body.classList.toggle("dark");
+    localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+}
+if(localStorage.getItem("darkMode")==="true"){document.body.classList.add("dark");}
 
-let currentMood = null;
-let recipeIndex = 0;
-let shuffledRecipes = [];
-let filteredRecipes = [];
-const RECIPES_PER_LOAD = 3;
+// =======================
+// CONFIG
+// =======================
+const geoApiKey="84f2d835ca2048dc86789c4475ede22b";
+let userLat=null,userLon=null;
+let recipeIndex=0;
+let shuffledRecipes=[],filteredRecipes=[];
+let activeAllergens=[];
+const RECIPES_PER_LOAD=3;
 
-// Allergens emojis
-const allergenEmojis = {
-    nuts: "🌰",
-    milk: "🥛",
-    fish: "🐟",
-    eggs: "🥚",
-    crustacean: "🦐",
-    wheat: "🌾",
-    gluten: "🌾"
-};
-
-let activeAllergens = []; // selected filters
+const allergenEmojis={nuts:"🌰",milk:"🥛",fish:"🐟",eggs:"🥚",crustacean:"🦐",wheat:"🌾",gluten:"🌾"};
 
 // =======================
 // LOCATION
 // =======================
-function getLocation() {
-    const text = document.getElementById("locationText");
-
+function getLocation(){
     navigator.geolocation.getCurrentPosition(
-        pos => {
-            userLat = pos.coords.latitude;
-            userLon = pos.coords.longitude;
-            text.innerText = "Location detected ✔";
-        },
-        () => {
-            text.innerText = "Location denied.";
-        }
+        p=>{userLat=p.coords.latitude;userLon=p.coords.longitude;locationText.innerText="Location detected ✔";},
+        ()=>locationText.innerText="Location denied."
     );
 }
 
 // =======================
-// DATA (recipes with allergens)
+// RECIPES (70) with images
 // =======================
-const moods = {
-    happy: [
-        {name:"Rainbow tacos 🌮", allergens: []},
-        {name:"Fruit smoothie 🍓", allergens:["milk"]},
-        {name:"Grilled chicken wrap 🥙", allergens: ["gluten","wheat"]},
-        {name:"Fresh salad 🥗", allergens: []},
-        {name:"Yogurt parfait 🍨", allergens: ["milk","nuts"]},
-        {name:"Mango salsa bowl 🥭", allergens: []},
-        {name:"Chicken Caesar wrap 🐔", allergens: ["gluten","milk","wheat"]},
-        {name:"Veggie burrito 🌯", allergens: ["gluten","wheat"]},
-        {name:"Pasta primavera 🍝", allergens: ["gluten","wheat"]},
-        {name:"Berry pancakes 🫐", allergens: ["gluten","milk","eggs","wheat"]},
-        {name:"Falafel pita 🧆", allergens: ["gluten","nuts","wheat"]},
-        {name:"Caprese sandwich 🧀", allergens: ["milk","gluten","wheat"]},
-        {name:"Shrimp tacos 🍤", allergens: ["fish","gluten","crustacean","wheat"]},
-        {name:"Lemon rice 🍋", allergens: []},
-        {name:"Smoothie bowl 🍌", allergens:["milk","nuts"]}
-    ],
-    // Repeat for sad, tired, stressed, bored (same structure as before)...
-    sad: [
-        {name:"Chocolate pancakes 🥞", allergens:["gluten","milk","eggs","wheat"]},
-        {name:"Warm soup 🍲", allergens:[]},
-        {name:"Mac & cheese 🧀", allergens:["gluten","milk","wheat"]},
-        {name:"Toast with jam 🍞", allergens:["gluten","wheat"]},
-        {name:"Hot cocoa ☕", allergens:["milk"]},
-        {name:"Mashed potatoes 🥔", allergens:["milk"]},
-        {name:"Grilled cheese 🧈", allergens:["gluten","milk","wheat"]},
-        {name:"Ramen noodles 🍜", allergens:["gluten","fish","wheat"]},
-        {name:"Chicken pot pie 🥧", allergens:["gluten","milk","eggs","wheat"]},
-        {name:"Baked ziti 🍝", allergens:["gluten","milk","wheat"]},
-        {name:"Brownies 🍫", allergens:["gluten","milk","nuts","eggs","wheat"]},
-        {name:"Creamy risotto 🍚", allergens:["milk"]},
-        {name:"French toast 🍞", allergens:["gluten","milk","eggs","wheat"]},
-        {name:"Chili stew 🌶️", allergens:[]},
-        {name:"Rice pudding 🍮", allergens:["milk","eggs"]}
-    ],
-    tired: [
-        {name:"Avocado toast 🥑", allergens:["gluten","nuts","wheat"]},
-        {name:"Scrambled eggs 🍳", allergens:["eggs","milk"]},
-        {name:"Protein smoothie 🥤", allergens:["milk","nuts"]},
-        {name:"Energy bowl 🥣", allergens:["nuts"]},
-        {name:"Banana oatmeal 🍌", allergens:["gluten","nuts","wheat"]},
-        {name:"Greek yogurt 🍶", allergens:["milk"]},
-        {name:"Peanut butter toast 🥜", allergens:["gluten","nuts","wheat"]},
-        {name:"Egg sandwich 🥪", allergens:["gluten","eggs","milk","wheat"]},
-        {name:"Breakfast burrito 🌯", allergens:["gluten","eggs","wheat"]},
-        {name:"Overnight oats 🌾", allergens:["gluten","milk","nuts","wheat"]},
-        {name:"Trail mix 🥜", allergens:["nuts"]},
-        {name:"Cottage cheese 🍶", allergens:["milk"]},
-        {name:"Hard-boiled eggs 🥚", allergens:["eggs"]},
-        {name:"Granola bar 🍯", allergens:["gluten","nuts","wheat"]},
-        {name:"Green smoothie 🥬", allergens:[]}
-    ],
-    stressed: [
-        {name:"Vegetable soup 🍵", allergens:[]},
-        {name:"Spinach pasta 🍝", allergens:["gluten","wheat"]},
-        {name:"Green salad 🥗", allergens:[]},
-        {name:"Herbal tea ☕", allergens:[]},
-        {name:"Rice bowl 🍚", allergens:[]},
-        {name:"Miso soup 🍲", allergens:["fish"]},
-        {name:"Steamed veggies 🥦", allergens:[]},
-        {name:"Quinoa bowl 🌾", allergens:[]},
-        {name:"Baked salmon 🐟", allergens:["fish"]},
-        {name:"Tofu stir-fry 🍜", allergens:[]},
-        {name:"Chamomile tea 🌼", allergens:[]},
-        {name:"Roasted sweet potato 🍠", allergens:[]},
-        {name:"Lentil soup 🫘", allergens:[]},
-        {name:"Brown rice & veggies 🍛", allergens:[]},
-        {name:"Cucumber salad 🥒", allergens:[]}
-    ],
-    bored: [
-        {name:"DIY sushi 🍣", allergens:["fish"]},
-        {name:"Mini pizza 🍕", allergens:["gluten","milk","wheat"]},
-        {name:"Loaded sandwiches 🥪", allergens:["gluten","milk","wheat"]},
-        {name:"Build-your-own tacos 🌮", allergens:["gluten","wheat"]},
-        {name:"Popcorn snacks 🍿", allergens:[]},
-        {name:"Nachos 🧀", allergens:["milk"]},
-        {name:"Quesadillas 🌯", allergens:["gluten","milk","wheat"]},
-        {name:"Sliders 🍔", allergens:["gluten","wheat"]},
-        {name:"Flatbread pizza 🍕", allergens:["gluten","milk","wheat"]},
-        {name:"Stuffed peppers 🌶️", allergens:[]},
-        {name:"Spring rolls 🥬", allergens:["gluten","wheat"]},
-        {name:"Fried rice 🍚", allergens:[]},
-        {name:"Pasta bake 🍝", allergens:["gluten","milk","wheat"]},
-        {name:"Chicken wraps 🐔", allergens:["gluten","wheat"]},
-        {name:"Snack platter 🧀", allergens:["milk"]}
-    ]
-};
+function generateRecipes(mood){
+    const bases={
+        happy:["Chicken","Salmon","Tofu","Shrimp","Veggie"],
+        sad:["Beef","Cheese","Pasta","Potato","Chicken"],
+        tired:["Egg","Yogurt","Oats","Banana","Chicken"],
+        stressed:["Rice","Fish","Tofu","Lentils","Veggies"],
+        bored:["Pizza","Burger","Wrap","Taco","Pasta"]
+    };
+    const styles=["Bowl","Bake","Grill","Stir-Fry","Wrap","Skillet","Salad"];
+    const flavors=["Garlic","Creamy","Spicy","Herb","Lemon","Classic","Sweet"];
+    const allergenMap={
+        Cheese:["milk"],Yogurt:["milk"],Egg:["eggs"],
+        Shrimp:["crustacean","fish"],Salmon:["fish"],
+        Pasta:["gluten","wheat"],Pizza:["gluten","milk","wheat"],
+        Wrap:["gluten","wheat"],Burger:["gluten","wheat"],
+        Taco:["gluten","wheat"],Oats:["gluten","wheat"]
+    };
+    const list=[];
+    for(let b of bases[mood]){
+        for(let s of styles){
+            for(let f of flavors){
+                if(list.length>=70) return shuffle(list);
+                list.push({name:`${f} ${b} ${s}`,allergens:allergenMap[b]||[]});
+            }
+        }
+    }
+    return shuffle(list);
+}
 
 // =======================
-// UTIL & FILTER
+// UTIL
 // =======================
-function shuffleArray(array){return [...array].sort(()=>0.5-Math.random());}
-function recipeLink(recipe){return `https://www.google.com/search?q=${encodeURIComponent(recipe.replace(/[^\w\s]/gi,""))} recipe`;}
-function addCard(container, html){container.innerHTML+=`<div class="card">${html}</div>`;}
+function shuffle(a){return [...a].sort(()=>0.5-Math.random());}
+function recipeLink(n){return `https://www.google.com/search?q=${encodeURIComponent(n+" recipe")}`;}
+// ✅ IMAGE FIXED: add &sig to prevent caching
+function recipeImage(n){return `https://source.unsplash.com/400x300/?food,${encodeURIComponent(n)}&sig=${Math.random()}`;}
+function addCard(el,r){
+    const allergens=r.allergens.map(a=>allergenEmojis[a]).join(" ");
+    el.innerHTML+=`
+    <div class="card">
+        <img src="${recipeImage(r.name)}" alt="${r.name}" onerror="this.src='https://via.placeholder.com/400x300?text=Recipe+Image'">
+        <a href="${recipeLink(r.name)}" target="_blank">${r.name}</a>
+        ${allergens?`<span class="allergens">${allergens}</span>`:""}
+    </div>`;
+}
 
+// =======================
+// FILTER
+// =======================
 function applyAllergenFilter(){
-    activeAllergens = Array.from(document.querySelectorAll('.allergen-filters input:checked')).map(i=>i.value);
-    if(!currentMood) return;
+    activeAllergens=[...document.querySelectorAll('.allergen-filters input:checked')].map(i=>i.value);
     recipeIndex=0;
-    filteredRecipes = shuffledRecipes.filter(r=>!r.allergens.some(a=>activeAllergens.includes(a)));
-    document.getElementById("recipeResults").innerHTML="";
-    showRecipesFiltered();
+    filteredRecipes=shuffledRecipes.filter(r=>!r.allergens.some(a=>activeAllergens.includes(a)));
+    recipeResults.innerHTML="";
+    showRecipes();
 }
 
-function showRecipesFiltered(){
-    const container = document.getElementById("recipeResults");
-    const moreBtn = document.getElementById("moreRecipesBtn");
-    const next = filteredRecipes.slice(recipeIndex, recipeIndex+RECIPES_PER_LOAD);
-
-    if(recipeIndex===0) container.innerHTML="<h3>🍽️ Recipe Options</h3>";
-
-    next.forEach(r=>{
-        const allergenDisplay = r.allergens.map(a=>allergenEmojis[a]).join(" ");
-        addCard(container,
-            `<a href="${recipeLink(r.name)}" target="_blank">${r.name}</a>`+
-            (allergenDisplay?`<span class="allergens">${allergenDisplay}</span>`:"")
-        );
-    });
-
-    recipeIndex += RECIPES_PER_LOAD;
-    moreBtn.style.display = recipeIndex<filteredRecipes.length?"inline-block":"none";
-}
-
-function showMoreRecipes(){ activeAllergens.length?showRecipesFiltered():showRecipes(); }
-
+// =======================
+// DISPLAY
+// =======================
 function showRecipes(){
-    const container=document.getElementById("recipeResults");
-    const moreBtn=document.getElementById("moreRecipesBtn");
-    if(recipeIndex===0) container.innerHTML="<h3>🍽️ Recipe Options</h3>";
-    const next=shuffledRecipes.slice(recipeIndex,recipeIndex+RECIPES_PER_LOAD);
-    next.forEach(r=>{
-        const allergenDisplay=r.allergens.map(a=>allergenEmojis[a]).join(" ");
-        addCard(container,
-            `<a href="${recipeLink(r.name)}" target="_blank">${r.name}</a>`+
-            (allergenDisplay?`<span class="allergens">${allergenDisplay}</span>`:"")
-        );
-    });
+    const list=activeAllergens.length?filteredRecipes:shuffledRecipes;
+    if(recipeIndex===0) recipeResults.innerHTML="<h3>🍽️ Recipe Options</h3>";
+    list.slice(recipeIndex,recipeIndex+RECIPES_PER_LOAD).forEach(r=>addCard(recipeResults,r));
     recipeIndex+=RECIPES_PER_LOAD;
-    moreBtn.style.display=recipeIndex<shuffledRecipes.length?"inline-block":"none";
+    moreRecipesBtn.style.display=recipeIndex<list.length?"inline-block":"none";
 }
+function showMoreRecipes(){showRecipes();}
 
 // =======================
 // RESTAURANTS
 // =======================
-function calculateDistance(lat1,lon1,lat2,lon2){
+function distance(lat1,lon1,lat2,lon2){
     const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;
     const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-    return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+    return (R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))).toFixed(2);
 }
 
-async function showRestaurants(container){
-    container.innerHTML="<h3>🏪 Nearby Restaurants</h3>";
-    if(!userLat||!userLon){addCard(container,"📍 Please enable location to see nearby restaurants."); return;}
-    try{
-        const res=await fetch(`https://api.geoapify.com/v2/places?categories=catering.restaurant&filter=circle:${userLon},${userLat},1500&limit=8&apiKey=${geoApiKey}`);
-        const data=await res.json();
-        if(!data.features.length) addCard(container,"No nearby restaurants found.");
-        data.features.forEach(place=>{
-            if(!place.properties.name) return;
-            const [lon,lat]=place.geometry.coordinates;
-            const mapsUrl=`https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
-            const distance=calculateDistance(userLat,userLon,lat,lon).toFixed(2);
-            addCard(container,`<a href="${mapsUrl}" target="_blank">${place.properties.name}</a><br><small>📍 ${distance} km away</small>`);
-        });
-    }catch{addCard(container,"Unable to load restaurants.");}
+async function showRestaurants(){
+    restaurantResults.innerHTML="<h3>🏪 Nearby Restaurants</h3>";
+    if(!userLat||!userLon){restaurantResults.innerHTML+="<p>Enable location</p>";return;}
+    const r=await fetch(`https://api.geoapify.com/v2/places?categories=catering.restaurant&filter=circle:${userLon},${userLat},1500&limit=6&apiKey=${geoApiKey}`);
+    const d=await r.json();
+    d.features.forEach(p=>{
+        if(!p.properties.name) return;
+        const [lon,lat]=p.geometry.coordinates;
+        restaurantResults.innerHTML+=`
+        <div class="card">
+            <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}">🗺️ ${p.properties.name}</a>
+            <small>${distance(userLat,userLon,lat,lon)} km away</small>
+        </div>`;
+    });
 }
 
 // =======================
 // MAIN
 // =======================
 function showOptions(mood){
-    const loading=document.getElementById("loading");
-    const restaurantDiv=document.getElementById("restaurantResults");
-
-    currentMood=mood;
     recipeIndex=0;
-    shuffledRecipes=shuffleArray(moods[mood]);
+    shuffledRecipes=generateRecipes(mood);
     filteredRecipes=[];
-
-    document.getElementById("recipeResults").innerHTML="";
-    restaurantDiv.innerHTML="";
+    recipeResults.innerHTML="";
+    restaurantResults.innerHTML="";
     loading.style.display="block";
-
-    setTimeout(async()=>{
+    setTimeout(()=>{
         loading.style.display="none";
-        applyAllergenFilter(); // applies filter if any selected
-        await showRestaurants(restaurantDiv);
-    },800);
+        applyAllergenFilter();
+        showRestaurants();
+    },600);
 }
 </script>
 
