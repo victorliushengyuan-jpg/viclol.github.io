@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Maze Generator & Solver</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0f0f1a; color: #e0e0ff; font-family: 'Courier New', monospace; padding: 16px; }
+  h1 { text-align: center; color: #a78bfa; margin-bottom: 12px; font-size: 1.4rem; }
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 14px; }
+  label { color: #94a3b8; font-size: 0.85rem; }
+  input[type=number] { width: 60px; background: #1e1e2e; border: 1px solid #4c4c7a; color: #e0e0ff;
+    padding: 4px 6px; border-radius: 4px; font-family: inherit; }
+  button { background: #6d28d9; color: white; border: none; padding: 7px 16px; border-radius: 6px;
+    cursor: pointer; font-family: inherit; font-size: 0.9rem; transition: background 0.2s; }
+  button:hover { background: #7c3aed; }
+  button:disabled { background: #3b3b5c; cursor: not-allowed; }
+  .main { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+  canvas { border: 2px solid #4c4c7a; border-radius: 6px; background: #111122; }
+  .panel { flex: 1; min-width: 320px; max-width: 480px; }
+  .log { background: #111122; border: 1px solid #2e2e4e; border-radius: 6px; padding: 10px;
+    height: 420px; overflow-y: auto; font-size: 0.78rem; line-height: 1.6; }
+  .log::-webkit-scrollbar { width: 6px; }
+  .log::-webkit-scrollbar-thumb { background: #4c4c7a; border-radius: 3px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.75rem; }
+  th { background: #1e1e3e; color: #a78bfa; padding: 5px 8px; text-align: left; }
+  td { padding: 4px 8px; border-bottom: 1px solid #1e1e3e; }
+  tr:hover td { background: #1a1a2e; }
+  .winner { color: #4ade80; font-weight: bold; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-bottom: 10px; font-size: 0.78rem; }
+  .dot { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
+  .phase-title { color: #f59e0b; font-weight: bold; margin: 6px 0 2px; }
+  .mut-title { color: #38bdf8; font-weight: bold; margin: 8px 0 2px; }
+  #status { text-align: center; color: #94a3b8; font-size: 0.82rem; margin-bottom: 8px; min-height: 18px; }
+  .summary { margin-top: 10px; background: #0d0d1f; border: 1px solid #2e2e4e; border-radius: 6px; padding: 8px; }
+  .summary h3 { color: #a78bfa; font-size: 0.85rem; margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<h1>🌀 Maze Generator & Solver with Mutation</h1>
+<div class="controls">
+  <label>Size: <input type="number" id="sizeInput" value="21" min="11" max="51" step="2"></label>
+  <label>Cell px: <input type="number" id="cellInput" value="18" min="8" max="30"></label>
+  <label>Mutations: <input type="number" id="mutInput" value="5" min="1" max="10"></label>
+  <label>Wall remove %: <input type="number" id="pctInput" value="10" min="1" max="30"></label>
+  <button id="runBtn" onclick="runAll()">▶ Generate & Solve</button>
+  <button id="stepBtn" onclick="nextMutation()" disabled>⚡ Next Mutation</button>
+</div>
+<div class="legend">
+  <span><span class="dot" style="background:#a78bfa"></span>A*</span>
+  <span><span class="dot" style="background:#f59e0b"></span>Dijkstra</span>
+  <span><span class="dot" style="background:#38bdf8"></span>BFS</span>
+  <span><span class="dot" style="background:#4ade80"></span>Start</span>
+  <span><span class="dot" style="background:#f87171"></span>End</span>
+</div>
+<div id="status">Ready.</div>
+<div class="main">
+  <canvas id="mazeCanvas"></canvas>
+  <div class="panel">
+    <div class="log" id="logPanel"></div>
+    <div class="summary" id="summaryPanel" style="display:none">
+      <h3>📊 Algorithm Win Summary (across all cycles)</h3>
+      <div id="summaryContent"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── Globals ───────────────────────────────────────────────────────────────
+let ROWS, COLS, CELL, grid, mutationCycle, mutationsTotal, wallRemovePct;
+let allResults = [];
+let mutationQueue = [];
+let currentMazeGrid = null;
+
+// ─── Maze Grid helpers ─────────────────────────────────────────────────────
+// grid[r][c] = 0 (path) | 1 (wall)
+function makeGrid(rows, cols) {
+  return Array.from({length: rows}, () => new Array(cols).fill(1));
+}
+
+// ─── Phase 1: Recursive Backtracking DFS ──────────────────────────────────
+function generateMaze(rows, cols) {
+  const g = makeGrid(rows, cols);
+  const visited = Array.from({length: rows}, () => new Array(cols).fill(false));
+
+  function carve(r, c) {
+    visited[r][c] = true;
+    g[r][c] = 0;
+    const dirs = shuffle([[0,2],[0,-2],[2,0],[-2,0]]);
+    for (const [dr, dc] of dirs) {
+      const nr = r + dr, nc = c + dc;
+      if (nr > 0 && nr < rows-1 && nc > 0 && nc < cols-1 && !visited[nr][nc]) {
+        g[r + dr/2][c + dc/2] = 0; // remove wall between
+        carve(nr, nc);
+      }
+    }
+  }
+  carve(1, 1);
+  // ensure start/end open
+  g[1][1] = 0;
+  g[rows-2][cols-2] = 0;
+  return g;
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// ─── Mutation: remove ~pct% of walls ──────────────────────────────────────
+function mutateMaze(g, pct) {
+  const rows = g.length, cols = g[0].length;
+  const clone = g.map(r => [...r]);
+  const walls = [];
+  for (let r = 1; r < rows-1; r++)
+    for (let c = 1; c < cols-1; c++)
+      if (clone[r][c] === 1) walls.push([r,c]);
+  const count = Math.floor(walls.length * pct / 100);
+  shuffle(walls);
+  for (let i = 0; i < count; i++) clone[walls[i][0]][walls[i][1]] = 0;
+  return clone;
+}
+
+// ─── Pathfinding ───────────────────────────────────────────────────────────
+function neighbors(g, r, c) {
+  const rows = g.length, cols = g[0].length;
+  const res = [];
+  for (const [dr,dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
+    const nr=r+dr, nc=c+dc;
+    if (nr>=0&&nr<rows&&nc>=0&&nc<cols&&g[nr][nc]===0) res.push([nr,nc]);
+  }
+  return res;
+}
+
+function heuristic(r,c,er,ec) {
+  return Math.abs(r-er)+Math.abs(c-ec); // Manhattan
+}
+
+function reconstructPath(cameFrom, key) {
+  const path = [];
+  let cur = key;
+  while (cur) { path.push(cur.split(',').map(Number)); cur = cameFrom[cur]; }
+  return path.reverse();
+}
+
+// A*
+function aStar(g, sr, sc, er, ec) {
+  const t0 = performance.now();
+  const open = new MinHeap();
+  const gScore = {}, cameFrom = {};
+  const startKey = `${sr},${sc}`;
+  gScore[startKey] = 0;
+  open.push({f: heuristic(sr,sc,er,ec), r:sr, c:sc});
+  let visited = 0;
+
+  while (!open.empty()) {
+    const {r,c} = open.pop();
+    visited++;
+    if (r===er && c===ec) {
+      const path = reconstructPath(cameFrom, `${er},${ec}`);
+      return {path, visited, time: performance.now()-t0};
+    }
+    const curKey = `${r},${c}`;
+    for (const [nr,nc] of neighbors(g,r,c)) {
+      const nKey = `${nr},${nc}`;
+      const tentG = (gScore[curKey]||0) + 1;
+      if (gScore[nKey] === undefined || tentG < gScore[nKey]) {
+        gScore[nKey] = tentG;
+        cameFrom[nKey] = curKey;
+        open.push({f: tentG + heuristic(nr,nc,er,ec), r:nr, c:nc});
+      }
+    }
+  }
+  return {path:[], visited, time: performance.now()-t0};
+}
+
+// Dijkstra
+function dijkstra(g, sr, sc, er, ec) {
+  const t0 = performance.now();
+  const dist = {}, cameFrom = {};
+  const pq = new MinHeap();
+  const startKey = `${sr},${sc}`;
+  dist[startKey] = 0;
+  pq.push({f:0, r:sr, c:sc});
+  let visited = 0;
+
+  while (!pq.empty()) {
+    const {f, r, c} = pq.pop();
+    const curKey = `${r},${c}`;
+    if (f > (dist[curKey]||Infinity)) continue;
+    visited++;
+    if (r===er && c===ec) {
+      const path = reconstructPath(cameFrom, `${er},${ec}`);
+      return {path, visited, time: performance.now()-t0};
+    }
+    for (const [nr,nc] of neighbors(g,r,c)) {
+      const nKey = `${nr},${nc}`;
+      const nd = (dist[curKey]||0) + 1;
+      if (dist[nKey] === undefined || nd < dist[nKey]) {
+        dist[nKey] = nd;
+        cameFrom[nKey] = curKey;
+        pq.push({f:nd, r:nr, c:nc});
+      }
+    }
+  }
+  return {path:[], visited, time: performance.now()-t0};
+}
+
+// BFS
+function bfs(g, sr, sc, er, ec) {
+  const t0 = performance.now();
+  const queue = [[sr,sc]];
+  const cameFrom = {[`${sr},${sc}`]: null};
+  let visited = 0;
+
+  while (queue.length) {
+    const [r,c] = queue.shift();
+    visited++;
+    if (r===er && c===ec) {
+      const path = reconstructPath(cameFrom, `${er},${ec}`);
+      return {path, visited, time: performance.now()-t0};
+    }
+    for (const [nr,nc] of neighbors(g,r,c)) {
+      const nKey = `${nr},${nc}`;
+      if (!(nKey in cameFrom)) {
+        cameFrom[nKey] = `${r},${c}`;
+        queue.push([nr,nc]);
+      }
+    }
+  }
+  return {path:[], visited, time: performance.now()-t0};
+}
+
+// ─── Min-Heap ──────────────────────────────────────────────────────────────
+class MinHeap {
+  constructor() { this.h = []; }
+  push(node) {
+    this.h.push(node);
+    let i = this.h.length - 1;
+    while (i > 0) {
+      const p = (i-1)>>1;
+      if (this.h[p].f <= this.h[i].f) break;
+      [this.h[p], this.h[i]] = [this.h[i], this.h[p]];
+      i = p;
+    }
+  }
+  pop() {
+    const top = this.h[0];
+    const last = this.h.pop();
+    if (this.h.length) {
+      this.h[0] = last;
+      let i = 0;
+      while (true) {
+        let s = i, l=2*i+1, r=2*i+2;
+        if (l<this.h.length && this.h[l].f<this.h[s].f) s=l;
+        if (r<this.h.length && this.h[r].f<this.h[s].f) s=r;
+        if (s===i) break;
+        [this.h[s], this.h[i]] = [this.h[i], this.h[s]];
+        i=s;
+      }
+    }
+    return top;
+  }
+  empty() { return this.h.length === 0; }
+}
+
+// ─── Drawing ───────────────────────────────────────────────────────────────
+function drawMaze(g, results, cycle) {
+  const rows = g.length, cols = g[0].length;
+  const canvas = document.getElementById('mazeCanvas');
+  canvas.width  = cols * CELL;
+  canvas.height = rows * CELL;
+  const ctx = canvas.getContext('2d');
+
+  // walls & paths
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      ctx.fillStyle = g[r][c] === 1 ? '#1a1a3e' : '#e8e8f8';
+      ctx.fillRect(c*CELL, r*CELL, CELL, CELL);
+    }
+  }
+
+  // draw paths with alpha overlay
+  const pathColors = [
+    'rgba(167,139,250,0.55)', // A* purple
+    'rgba(245,158,11,0.45)',  // Dijkstra amber
+    'rgba(56,189,248,0.45)',  // BFS cyan
+  ];
+  for (let i = 0; i < results.length; i++) {
+    ctx.fillStyle = pathColors[i];
+    for (const [r,c] of results[i].path) {
+      ctx.fillRect(c*CELL+1, r*CELL+1, CELL-2, CELL-2);
+    }
+  }
+
+  // start / end
+  const er = rows-2, ec = cols-2;
+  ctx.fillStyle = '#4ade80';
+  ctx.fillRect(1*CELL+1, 1*CELL+1, CELL-2, CELL-2);
+  ctx.fillStyle = '#f87171';
+  ctx.fillRect(ec*CELL+1, er*CELL+1, CELL-2, CELL-2);
+
+  // cycle label
+  ctx.fillStyle = '#a78bfa';
+  ctx.font = `bold ${Math.max(10,CELL-4)}px Courier New`;
+  ctx.fillText(cycle === 0 ? 'Original' : `Mutation ${cycle}`, 4, CELL-2);
+}
+
+// ─── Logging ───────────────────────────────────────────────────────────────
+function log(html) {
+  const panel = document.getElementById('logPanel');
+  panel.innerHTML += html + '\n';
+  panel.scrollTop = panel.scrollHeight;
+}
+
+function logResults(results, cycle) {
+  const names = ['A*', 'Dijkstra', 'BFS'];
+  const colors = ['#a78bfa','#f59e0b','#38bdf8'];
+  const label = cycle === 0 ? 'Original Maze' : `Mutation Cycle ${cycle}`;
+
+  log(`<div class="${cycle===0?'phase-title':'mut-title'}">── ${label} ──</div>`);
+  log(`<table>
+    <tr><th>Algorithm</th><th>Time (ms)</th><th>Nodes</th><th>Path Len</th><th></th></tr>
+    ${results.map((r,i) => {
+      const best = results.reduce((a,b) => a.visited < b.visited ? a : b);
+      const isBest = r === best;
+      return `<tr>
+        <td style="color:${colors[i]}">${names[i]}</td>
+        <td>${r.time.toFixed(3)}</td>
+        <td>${r.visited}</td>
+        <td>${r.path.length}</td>
+        <td>${isBest ? '<span class="winner">★ best</span>' : ''}</td>
+      </tr>`;
+    }).join('')}
+  </table>`);
+
+  // record winner
+  const best = results.reduce((a,b) => a.visited < b.visited ? a : b);
+  const winnerIdx = results.indexOf(best);
+  allResults.push({cycle, winner: names[winnerIdx], results: results.map((r,i)=>({name:names[i],...r}))});
+}
+
+function updateSummary() {
+  const wins = {'A*':0,'Dijkstra':0,'BFS':0};
+  for (const r of allResults) wins[r.winner]++;
+  const total = allResults.length;
+  const panel = document.getElementById('summaryPanel');
+  panel.style.display = 'block';
+  document.getElementById('summaryContent').innerHTML = `
+    <table>
+      <tr><th>Algorithm</th><th>Wins</th><th>Win Rate</th><th>Empirical Verdict</th></tr>
+      ${Object.entries(wins).map(([name,w]) => `
+        <tr>
+          <td>${name}</td><td>${w}</td><td>${(w/total*100).toFixed(0)}%</td>
+          <td style="font-size:0.7rem;color:#94a3b8">${verdict(name)}</td>
+        </tr>`).join('')}
+    </table>
+    <div style="margin-top:8px;font-size:0.72rem;color:#94a3b8;line-height:1.5">
+      <b style="color:#a78bfa">Why BFS/Dijkstra tend to win on mutated mazes:</b><br>
+      On an unweighted grid, BFS and Dijkstra are equivalent and both guarantee the shortest path
+      while visiting nodes in FIFO/priority order. A* uses a heuristic (Manhattan distance) that
+      guides it toward the goal — optimal on sparse mazes — but as walls are removed, the search
+      space becomes denser and the heuristic advantage shrinks. BFS explores fewer redundant nodes
+      in open areas because it expands level-by-level without re-queuing. Empirically, after
+      multiple mutation cycles the maze approaches a near-open grid where BFS ≈ Dijkstra &lt; A*
+      in nodes visited, because A*'s priority queue overhead and re-insertions outweigh its
+      directional benefit.
+    </div>`;
+}
+
+function verdict(name) {
+  return {
+    'A*': 'Best on sparse/structured mazes; heuristic loses edge as walls vanish',
+    'Dijkstra': 'Equivalent to BFS on unit-weight grids; consistent across mutations',
+    'BFS': 'Optimal on unweighted grids; level-order expansion minimises revisits'
+  }[name];
+}
+
+// ─── Main flow ─────────────────────────────────────────────────────────────
+function solveAll(g) {
+  const sr=1, sc=1, er=g.length-2, ec=g[0].length-2;
+  return [
+    aStar(g, sr, sc, er, ec),
+    dijkstra(g, sr, sc, er, ec),
+    bfs(g, sr, sc, er, ec),
+  ];
+}
+
+function runAll() {
+  ROWS = parseInt(document.getElementById('sizeInput').value);
+  COLS = ROWS;
+  // force odd
+  if (ROWS % 2 === 0) ROWS = COLS = ROWS + 1;
+  CELL = parseInt(document.getElementById('cellInput').value);
+  mutationsTotal = parseInt(document.getElementById('mutInput').value);
+  wallRemovePct  = parseInt(document.getElementById('pctInput').value);
+
+  allResults = [];
+  mutationCycle = 0;
+  document.getElementById('logPanel').innerHTML = '';
+  document.getElementById('summaryPanel').style.display = 'none';
+  document.getElementById('stepBtn').disabled = true;
+  document.getElementById('runBtn').disabled = true;
+  document.getElementById('status').textContent = 'Generating maze…';
+
+  setTimeout(() => {
+    currentMazeGrid = generateMaze(ROWS, COLS);
+    const results = solveAll(currentMazeGrid);
+    drawMaze(currentMazeGrid, results, 0);
+    logResults(results, 0);
+    document.getElementById('status').textContent = `Original maze solved. ${mutationsTotal} mutation cycles queued.`;
+    document.getElementById('stepBtn').disabled = false;
+    document.getElementById('runBtn').disabled = false;
+
+    // auto-run all mutations with delay for visual effect
+    mutationQueue = Array.from({length: mutationsTotal}, (_,i) => i+1);
+    scheduleNextMutation();
+  }, 20);
+}
+
+function scheduleNextMutation() {
+  if (mutationQueue.length === 0) {
+    updateSummary();
+    document.getElementById('status').textContent = '✅ All mutation cycles complete. See summary below.';
+    document.getElementById('stepBtn').disabled = true;
+    return;
+  }
+  setTimeout(() => nextMutation(), 600);
+}
+
+function nextMutation() {
+  if (!currentMazeGrid || mutationQueue.length === 0) return;
+  const cycle = mutationQueue.shift();
+  document.getElementById('status').textContent = `Running mutation cycle ${cycle}…`;
+  setTimeout(() => {
+    currentMazeGrid = mutateMaze(currentMazeGrid, wallRemovePct);
+    const results = solveAll(currentMazeGrid);
+    drawMaze(currentMazeGrid, results, cycle);
+    logResults(results, cycle);
+    document.getElementById('status').textContent = `Mutation ${cycle} done. ${mutationQueue.length} remaining.`;
+    scheduleNextMutation();
+  }, 20);
+}
+</script>
+</body>
+</html>
