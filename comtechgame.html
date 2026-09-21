@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Last Chamber — A Basilisk Duel</title>
+<style>
+:root {
+  color-scheme: dark;
+  --paper: #dfdccb;
+  --muted: #94a69a;
+  --gold: #c8ad72;
+  --line: #34483c;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    #22392e 0,
+    #101b16 40%,
+    #080d0b 90%
+  );
+  color: var(--paper);
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  color: var(--paper);
+  border: 1px solid #58694c;
+  background: #18251d;
+  padding: 11px 18px;
+  transition: background .15s, border-color .15s;
+}
+
+button:hover {
+  background: #2b3c2b;
+  border-color: var(--gold);
+}
+
+button:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+}
+
+button.primary {
+  background: #c8ad72;
+  color: #152015;
+  border: 1px solid #ebd7a4;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+button.primary:hover { background: #e6ca8c; }
+
+button.small {
+  padding: 8px 12px;
+  font: 11px "Courier New", monospace;
+  letter-spacing: 1px;
+}
+
+.shell {
+  width: min(1120px, 96%);
+  margin: auto;
+  padding: 30px 0 24px;
+}
+
+.masthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.eyebrow {
+  color: var(--gold);
+  font: 10px "Courier New", monospace;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+}
+
+h1 {
+  font-weight: normal;
+  font-size: clamp(26px, 4vw, 43px);
+  letter-spacing: 3px;
+  margin: 0;
+}
+
+.edition {
+  text-align: right;
+  color: var(--muted);
+  font: 10px/1.9 "Courier New", monospace;
+  letter-spacing: 2px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding: 13px 0;
+}
+
+.status {
+  font: 11px "Courier New", monospace;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+
+.status strong {
+  color: var(--paper);
+  font-weight: normal;
+}
+
+.tools { display: flex; gap: 7px; }
+
+.stage {
+  position: relative;
+  border: 1px solid #4b5b45;
+  box-shadow: 0 20px 70px #0008;
+  background: #101b15;
+  isolation: isolate;
+}
+
+.stage:focus { outline: none; }
+
+.stage:fullscreen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #080e0a;
+}
+
+.stage:fullscreen canvas {
+  max-height: 100vh;
+  width: auto;
+  max-width: 100vw;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16/10;
+  touch-action: none;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(90deg, #08120eea, #08120eb8, #08120eeb);
+  padding: 20px;
+}
+
+.overlay[hidden] { display: none; }
+
+.panel {
+  max-width: 570px;
+  text-align: center;
+}
+
+.seal {
+  display: block;
+  color: var(--gold);
+  font-size: 38px;
+  line-height: 1;
+  margin-bottom: 15px;
+}
+
+.panel h2 {
+  font-size: clamp(26px, 5vw, 49px);
+  font-weight: normal;
+  letter-spacing: 2px;
+  margin: 6px 0 12px;
+}
+
+.panel p {
+  color: #b7c1b5;
+  font-size: 15px;
+  line-height: 1.65;
+  max-width: 490px;
+  margin: 12px auto;
+}
+
+.panel .kicker {
+  color: var(--gold);
+  font: 10px "Courier New", monospace;
+  letter-spacing: 3px;
+}
+
+.intro-grid {
+  display: flex;
+  justify-content: center;
+  gap: 23px;
+  margin: 22px 0;
+  color: #cbd2c5;
+  font: 11px/1.8 "Courier New", monospace;
+}
+
+.intro-grid b {
+  display: block;
+  color: var(--gold);
+  font-weight: normal;
+}
+
+.panel .fine {
+  font: 11px/1.6 "Courier New", monospace;
+  color: #91a291;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 13px;
+  padding: 19px 2px;
+  color: #a9b6a8;
+  font: 11px "Courier New", monospace;
+}
+
+.controls span { white-space: nowrap; }
+
+kbd {
+  font: 11px "Courier New", monospace;
+  border: 1px solid #475845;
+  border-bottom-width: 2px;
+  color: #eee6ce;
+  display: inline-block;
+  padding: 4px 6px;
+  margin-right: 5px;
+  background: #1b261d;
+}
+
+details {
+  border-top: 1px solid var(--line);
+  padding: 14px 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+summary {
+  cursor: pointer;
+  color: var(--gold);
+  font: 11px "Courier New", monospace;
+  letter-spacing: 1px;
+}
+
+.guide {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 25px;
+  padding-top: 12px;
+}
+
+.guide b { color: #d9dfcf; font-weight: normal; }
+
+.foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  font: 10px/1.7 "Courier New", monospace;
+  color: #829282;
+  margin-top: 12px;
+}
+
+.touch {
+  display: none;
+  justify-content: space-between;
+  gap: 15px;
+  margin: 12px 0;
+  user-select: none;
+}
+
+.pad {
+  display: grid;
+  grid-template-columns: 42px 42px 42px;
+  gap: 4px;
+}
+
+.pad button { padding: 11px 0; touch-action: none; }
+.pad button:first-child { grid-column: 2; }
+.pad button:nth-child(2) { grid-column: 1; }
+
+.actions { display: flex; gap: 5px; align-items: center; }
+
+.actions button {
+  padding: 15px 11px;
+  touch-action: none;
+  font-size: 12px;
+}
+
+@media (pointer: coarse) {
+  .touch { display: flex; }
+}
+
+@media (max-width: 600px) {
+  .shell { padding-top: 17px; }
+  .edition { display: none; }
+  .masthead { margin-bottom: 12px; }
+  .eyebrow { font-size: 8px; letter-spacing: 2px; }
+  .toolbar { flex-wrap: wrap; }
+  .status { font-size: 10px; }
+  .panel { margin: auto; }
+  .panel p { font-size: 11px; margin: 8px auto; }
+  .panel h2 { font-size: 29px; }
+  .seal, .panel .fine { display: none; }
+  .intro-grid { margin: 10px 0; gap: 8px; font-size: 8px; }
+  .panel button { padding: 9px 15px; }
+  .panel .kicker { font-size: 8px; }
+  .controls { font-size: 10px; gap: 10px; }
+  .guide { grid-template-columns: 1fr; gap: 4px; }
+  .foot { display: block; }
+  .overlay { padding: 10px; overflow: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button { transition: none; }
+}
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="masthead">
+    <div>
+      <p class="eyebrow">Harry Potter inspired · Chamber of Secrets</p>
+      <h1>THE LAST CHAMBER</h1>
+    </div>
+    <div class="edition">
+      A BASILISK DUEL<br>
+      ONE SWORD. ONE WAY OUT.
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="status" id="record">
+      ATTEMPT <strong>01</strong> / SESSION BEST <strong>—</strong>
+    </div>
+    <div class="tools">
+      <button class="small" id="pause">PAUSE</button>
+      <button class="small" id="sound" aria-pressed="false">SOUND OFF</button>
+      <button class="small" id="full">FULLSCREEN</button>
+    </div>
+  </div>
+
+  <section
+    class="stage"
+    id="stage"
+    tabindex="0"
+    aria-label="Basilisk boss arena. WASD to move, J to attack, Space to roll, E to heal."
+  >
+    <canvas id="game" width="960" height="600">
+      This game requires a browser with HTML canvas.
+    </canvas>
+    <div class="overlay" id="overlay">
+      <div class="panel" id="panel"></div>
+    </div>
+  </section>
+
+  <div class="touch" aria-label="Touch controls">
+    <div class="pad">
+      <button data-dir="up" aria-label="Move up">↑</button>
+      <button data-dir="left" aria-label="Move left">←</button>
+      <button data-dir="down" aria-label="Move down">↓</button>
+      <button data-dir="right" aria-label="Move right">→</button>
+    </div>
+    <div class="actions">
+      <button data-action="attack">SWORD</button>
+      <button data-action="roll">ROLL</button>
+      <button data-action="heal">HEAL</button>
+    </div>
+  </div>
+
+  <div class="controls">
+    <span><kbd>W A S D</kbd> / <kbd>↑ ↓ ← →</kbd> Move</span>
+    <span><kbd>J</kbd> / Click · Sword</span>
+    <span><kbd>SPACE</kbd> Roll</span>
+    <span><kbd>E</kbd> Heal × 2</span>
+    <span><kbd>ESC</kbd> Pause</span>
+  </div>
+
+  <details id="guide">
+    <summary>FIELD NOTES — LEARN BEFORE YOU DESCEND</summary>
+    <div class="guide">
+      <p>
+        <b>Read. Roll. Strike.</b><br>
+        Amber shapes show where the next attack will land.
+        Roll as the strike begins; only the middle of your roll is
+        invincible. Your sword automatically faces the Basilisk’s head.
+      </p>
+      <p>
+        <b>Make every opening count.</b><br>
+        Attack its head when it glows pale green after a move.
+        Scales resist damage at other times. Swinging and rolling
+        use stamina. Stop attacking to recover it.
+      </p>
+      <p>
+        <b>The chamber is your shield.</b><br>
+        Stone pillars block the lethal gaze. Venom stays on the floor.
+        Healing takes one second and a hit interrupts it.
+        Below half health, the Basilisk attacks faster.
+      </p>
+    </div>
+  </details>
+
+  <footer class="foot">
+    <span>
+      GOAL: SLAY THE BASILISK &amp; OPEN THE CHAMBER.<br>
+      DEFEAT: YOUR HEALTH REACHES ZERO. RETRIES ARE UNLIMITED.
+    </span>
+    <span>
+      Unofficial fan-inspired game · Original procedural artwork<br>
+      No accounts or saved progress. Reload to start fresh.
+    </span>
+  </footer>
+</main>
+
+<script>
+"use strict";
+
+// Everything is contained in this file.
+// Progress exists only in memory and resets when the page reloads.
+
+const TAU = Math.PI * 2;
+const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+const angleDiff = (a, b) =>
+  Math.atan2(Math.sin(a - b), Math.cos(a - b));
+
+const pillars = [
+  { x: 225, y: 210, r: 25 },
+  { x: 735, y: 210, r: 25 },
+  { x: 225, y: 425, r: 25 },
+  { x: 735, y: 425, r: 25 }
+];
+
+function segmentDistance(p, a, b) {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const t = clamp(
+    ((p.x - a.x) * dx + (p.y - a.y) * dy) /
+    (dx * dx + dy * dy || 1),
+    0, 1
+  );
+  return Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy);
+}
+
+function blocked(a, b) {
+  return pillars.some(c => segmentDistance(c, a, b) < c.r + 3);
+}
+
+function moveBody(o, dx, dy, r = 12) {
+  o.x = clamp(o.x + dx, 65 + r, 895 - r);
+  o.y = clamp(o.y + dy, 112 + r, 510 - r);
+
+  for (const c of pillars) {
+    let x = o.x - c.x;
+    let y = o.y - c.y;
+    let d = Math.hypot(x, y);
+
+    if (d < c.r + r) {
+      if (d < .001) {
+        x = 1;
+        y = 0;
+        d = 1;
+      }
+      o.x = c.x + x / d * (c.r + r);
+      o.y = c.y + y / d * (c.r + r);
+    }
+  }
+}
+
+class ChamberGame {
+  constructor(onEvent = () => {}) {
+    this.onEvent = onEvent;
+    this.attempt = 0;
+    this.reset(false);
+  }
+
+  reset(play = true) {
+    this.player = {
+      x: 480, y: 430,
+      hp: 100, stamina: 100, flasks: 2,
+      action: "idle", t: 0, duration: 0,
+      inv: 0, regen: 0,
+      facing: -Math.PI / 2,
+      dx: 0, dy: -1, hit: false
+    };
+
+    this.boss = {
+      x: 480, y: 232,
+      hp: 720, max: 720,
+      phase: 1,
+      state: "approach",
+      t: 1.6, elapsed: 0, seq: 0,
+      angle: Math.PI / 2,
+      move: null, hit: false,
+      trail: [], transitioned: false
+    };
+
+    this.time = 0;
+    this.pools = [];
+    this.effects = [];
+    this.shake = 0;
+    this.flash = 0;
+    this.message = "Keep your distance. Read its first move.";
+    this.messageTime = 4;
+    this.mode = play ? "playing" : "title";
+
+    if (play) this.attempt++;
+
+    for (let i = 0; i < 24; i++) {
+      this.boss.trail.push({
+        x: 480 + Math.sin(i * .22) * 65,
+        y: 232 - i * 4
+      });
+    }
+
+    this.emit("reset");
+  }
+
+  emit(type, data = {}) {
+    this.onEvent(type, data);
+  }
+
+  note(message) {
+    this.message = message;
+    this.messageTime = 2.5;
+  }
+
+  action(name, input = { x: 0, y: 0 }) {
+    if (this.mode !== "playing") return false;
+
+    const p = this.player;
+    if (p.action !== "idle") return false;
+
+    if (name === "roll") {
+      if (p.stamina < 30) {
+        this.note("Not enough stamina to roll.");
+        return false;
+      }
+
+      let x = input.x;
+      let y = input.y;
+      let n = Math.hypot(x, y);
+
+      if (!n) {
+        x = p.dx;
+        y = p.dy;
+        n = Math.hypot(x, y) || 1;
+      }
+
+      p.dx = x / n;
+      p.dy = y / n;
+      p.stamina -= 30;
+      p.regen = .65;
+      p.action = "roll";
+      p.t = 0;
+      p.duration = .38;
+      this.emit("roll");
+      return true;
+    }
+
+    if (name === "attack") {
+      if (p.stamina < 20) {
+        this.note("Not enough stamina to swing.");
+        return false;
+      }
+
+      p.stamina -= 20;
+      p.regen = .65;
+      p.action = "attack";
+      p.t = 0;
+      p.duration = .43;
+      p.hit = false;
+      p.facing = Math.atan2(this.boss.y - p.y, this.boss.x - p.x);
+      this.emit("swing");
+      return true;
+    }
+
+    if (name === "heal") {
+      if (p.flasks <= 0) {
+        this.note("No healing draughts left.");
+        return false;
+      }
+
+      if (p.hp >= 100) {
+        this.note("Your health is already full.");
+        return false;
+      }
+
+      p.flasks--;
+      p.action = "heal";
+      p.t = 0;
+      p.duration = 1.05;
+      this.note("Hold your ground…");
+      this.emit("healstart");
+      return true;
+    }
+
+    return false;
+  }
+
+  hurt(amount, cause) {
+    const p = this.player;
+    const rollingSafely =
+      p.action === "roll" && p.t >= .045 && p.t < .31;
+
+    if (this.mode !== "playing" || p.inv > 0 || rollingSafely) {
+      return false;
+    }
+
+    p.hp = Math.max(0, p.hp - amount);
+    p.inv = .72;
+    this.shake = 7;
+    this.flash = .16;
+
+    if (p.action === "heal") {
+      this.note("Healing interrupted. Find a safer opening.");
+    } else {
+      this.note(cause);
+    }
+
+    p.action = "idle";
+    this.emit("hurt");
+
+    this.effects.push({
+      x: p.x, y: p.y,
+      t: .5, max: .5,
+      color: "#edb99b",
+      text: "−" + amount
+    });
+
+    if (p.hp <= 0) {
+      this.mode = "dead";
+      this.cause = cause;
+      this.emit("dead");
+    }
+
+    return true;
+  }
+
+  strike() {
+    const p = this.player;
+    const b = this.boss;
+
+    if (dist(p, b) > 100 || blocked(p, b)) {
+      this.note("Too far away — strike the head.");
+      return;
+    }
+
+    const open = b.state === "recover";
+    const damage = open ? 34 : 9;
+
+    b.hp = Math.max(0, b.hp - damage);
+    this.shake = open ? 4 : 1;
+
+    this.effects.push({
+      x: b.x, y: b.y - 25,
+      t: .65, max: .65,
+      color: open ? "#e6e9b6" : "#98a694",
+      text: open ? "−34" : "−9 · SCALES"
+    });
+
+    this.emit(open ? "hit" : "armor");
+
+    if (b.hp <= 0) {
+      this.mode = "won";
+      this.emit("won");
+    }
+  }
+
+  telegraph(type, combo = false) {
+    const b = this.boss;
+    const p = this.player;
+
+    b.state = "windup";
+    b.move = type;
+    b.combo = combo;
+    b.hit = false;
+    b.origin = { x: b.x, y: b.y };
+    b.angle = Math.atan2(p.y - b.y, p.x - b.x);
+    b.elapsed = 0;
+
+    const speed = b.phase === 2 ? .83 : 1;
+    const durations = {
+      lunge: 1.04,
+      sweep: .95,
+      venom: 1.2,
+      gaze: 1.55
+    };
+
+    b.total = b.t = durations[type] * speed * (combo ? .8 : 1);
+
+    if (type === "lunge") {
+      let length = clamp(dist(p, b) + 85, 170, 350);
+      const dx = Math.cos(b.angle);
+      const dy = Math.sin(b.angle);
+
+      // Stop the lunge before colliding with a stone pillar.
+      for (const c of pillars) {
+        const cx = c.x - b.x;
+        const cy = c.y - b.y;
+        const proj = cx * dx + cy * dy;
+        const perp = cx * cx + cy * cy - proj * proj;
+
+        if (proj > 0 && perp < (c.r + 26) ** 2) {
+          length = Math.min(
+            length,
+            Math.max(0, proj - Math.sqrt((c.r + 26) ** 2 - perp))
+          );
+        }
+      }
+
+      b.end = {
+        x: clamp(b.x + dx * length, 100, 860),
+        y: clamp(b.y + dy * length, 145, 480)
+      };
+    }
+
+    if (type === "venom") {
+      b.targets = [
+        { x: p.x, y: p.y, r: 49 },
+        {
+          x: clamp(p.x + 100, 120, 840),
+          y: clamp(p.y - 65, 155, 465),
+          r: 45
+        },
+        {
+          x: clamp(p.x - 100, 120, 840),
+          y: clamp(p.y + 60, 155, 465),
+          r: 45
+        }
+      ];
+    }
+
+    this.emit("warning", { type });
+  }
+
+  startAttack() {
+    const b = this.boss;
+
+    b.state = "active";
+    b.elapsed = 0;
+    b.hit = false;
+    b.t = {
+      lunge: .42,
+      sweep: .28,
+      venom: .22,
+      gaze: .48
+    }[b.move];
+
+    if (b.move === "venom") {
+      for (const target of b.targets) {
+        this.pools.push({ ...target, t: 5.8, max: 5.8 });
+      }
+    }
+
+    this.emit("attack", { type: b.move });
+  }
+
+  update(dt, input = { x: 0, y: 0 }) {
+    if (this.mode !== "playing") return;
+
+    dt = Math.min(dt, .04);
+    this.time += dt;
+
+    const p = this.player;
+    const b = this.boss;
+
+    this.messageTime = Math.max(0, this.messageTime - dt);
+    this.flash = Math.max(0, this.flash - dt);
+    this.shake = Math.max(0, this.shake - dt * 24);
+    p.inv = Math.max(0, p.inv - dt);
+    p.regen = Math.max(0, p.regen - dt);
+
+    let x = input.x;
+    let y = input.y;
+    const n = Math.hypot(x, y);
+
+    if (n) {
+      x /= n;
+      y /= n;
+    }
+
+    if (p.action !== "idle") {
+      p.t += dt;
+
+      if (p.action === "roll") {
+        moveBody(p, p.dx * 455 * dt, p.dy * 455 * dt);
+      }
+
+      if (p.action === "attack" && !p.hit && p.t >= .14) {
+        p.hit = true;
+        this.strike();
+        if (this.mode !== "playing") return;
+      }
+
+      if (p.t >= p.duration) {
+        if (p.action === "heal") {
+          p.hp = Math.min(100, p.hp + 48);
+          this.note("Restored 48 health.");
+          this.emit("heal");
+        }
+        p.action = "idle";
+      }
+    }
+
+    if (p.action === "idle" || p.action === "attack") {
+      const speed = p.action === "attack" ? 48 : 174;
+      moveBody(p, x * speed * dt, y * speed * dt);
+
+      if (n) {
+        p.dx = x;
+        p.dy = y;
+        if (p.action === "idle") p.facing = Math.atan2(y, x);
+      }
+    }
+
+    if (p.regen === 0 && p.action === "idle") {
+      p.stamina = Math.min(100, p.stamina + 29 * dt);
+    }
+
+    for (const pool of this.pools) {
+      pool.t -= dt;
+      if (dist(p, pool) < pool.r + 6) {
+        this.hurt(16, "Venom burns. Leave the green pools.");
+      }
+    }
+
+    this.pools = this.pools.filter(pool => pool.t > 0);
+    if (this.mode !== "playing") return;
+
+    b.t -= dt;
+    b.elapsed += dt;
+
+    if (b.state === "approach") {
+      const d = dist(p, b);
+      b.angle = Math.atan2(p.y - b.y, p.x - b.x);
+
+      if (d > 125) {
+        moveBody(
+          b,
+          Math.cos(b.angle) * 60 * dt,
+          Math.sin(b.angle) * 60 * dt,
+          25
+        );
+      }
+
+      if (b.t <= 0) {
+        const patterns = b.phase === 1
+          ? ["lunge", "sweep", "venom", "lunge", "gaze", "sweep"]
+          : ["lunge", "venom", "sweep", "gaze", "lunge", "sweep", "venom"];
+
+        this.telegraph(patterns[b.seq++ % patterns.length]);
+      }
+    } else if (b.state === "windup") {
+      if (b.t <= 0) this.startAttack();
+    } else if (b.state === "active") {
+      if (b.move === "lunge") {
+        const t = clamp(b.elapsed / .42, 0, 1);
+        b.x = b.origin.x + (b.end.x - b.origin.x) * t;
+        b.y = b.origin.y + (b.end.y - b.origin.y) * t;
+
+        if (!b.hit && dist(p, b) < 42) {
+          b.hit = this.hurt(
+            36,
+            "The lunge caught you. Roll across its path."
+          );
+        }
+      }
+
+      if (
+        b.move === "sweep" &&
+        !b.hit &&
+        dist(p, b) < 168 &&
+        Math.abs(
+          angleDiff(Math.atan2(p.y - b.y, p.x - b.x), b.angle)
+        ) < 1.55
+      ) {
+        b.hit = this.hurt(
+          32,
+          "The sweeping bite caught you. Roll through it or retreat."
+        );
+      }
+
+      if (
+        b.move === "gaze" &&
+        !b.hit &&
+        Math.abs(
+          angleDiff(Math.atan2(p.y - b.y, p.x - b.x), b.angle)
+        ) < .31 &&
+        !blocked(b, p)
+      ) {
+        b.hit = this.hurt(
+          48,
+          "The gaze found you. Hide behind a stone pillar."
+        );
+      }
+
+      if (b.t <= 0) {
+        if (b.phase === 2 && b.move === "lunge" && !b.combo) {
+          this.telegraph("lunge", true);
+        } else {
+          b.state = "recover";
+          b.total = b.t = {
+            lunge: 1.45,
+            sweep: 1.25,
+            venom: 1.1,
+            gaze: 1.7
+          }[b.move];
+          b.elapsed = 0;
+          this.emit("opening");
+        }
+      }
+    } else if (b.state === "recover" && b.t <= 0) {
+      if (b.hp <= b.max * .5 && !b.transitioned) {
+        b.transitioned = true;
+        b.phase = 2;
+        b.state = "enrage";
+        b.total = b.t = 1.8;
+        b.elapsed = 0;
+        this.note("PHASE II — beware the double lunge.");
+        this.emit("phase");
+      } else {
+        b.state = "approach";
+        b.t = b.phase === 2 ? .52 : .85;
+        b.elapsed = 0;
+      }
+    } else if (b.state === "enrage" && b.t <= 0) {
+      b.state = "approach";
+      b.t = .4;
+      b.elapsed = 0;
+    }
+
+    if (b.trail.length === 0 || dist(b, b.trail[0]) > 5) {
+      b.trail.unshift({ x: b.x, y: b.y });
+      b.trail.length = Math.min(28, b.trail.length);
+    }
+
+    for (const e of this.effects) e.t -= dt;
+    this.effects = this.effects.filter(e => e.t > 0);
+  }
+}
+
+// Page controls and session-only statistics.
+
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+const stage = document.getElementById("stage");
+const overlay = document.getElementById("overlay");
+const panel = document.getElementById("panel");
+
+const stats = { attempts: 0, best: 0, wins: 0, fastest: null };
+const keys = new Set();
+const touchKeys = new Set();
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+let audio = null;
+let sound = false;
+let game;
+
+function tone(f, d = .1, type = "sine", volume = .035) {
+  if (!sound) return;
+
+  try {
+    audio = audio || new (
+      window.AudioContext || window.webkitAudioContext
+    )();
+
+    if (audio.state === "suspended") audio.resume();
+
+    const oscillator = audio.createOscillator();
+    const gain = audio.createGain();
+
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(f, audio.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(
+      Math.max(30, f * .6),
+      audio.currentTime + d
+    );
+
+    gain.gain.setValueAtTime(volume, audio.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001, audio.currentTime + d);
+
+    oscillator.connect(gain);
+    gain.connect(audio.destination);
+    oscillator.start();
+    oscillator.stop(audio.currentTime + d);
+  } catch {}
+}
+
+function updateRecord() {
+  document.getElementById("record").innerHTML =
+    "ATTEMPT <strong>" +
+    String(Math.max(1, stats.attempts)).padStart(2, "0") +
+    "</strong> &nbsp; / &nbsp; SESSION BEST <strong>" +
+    Math.round(stats.best) +
+    "% CLEARED</strong>";
+}
+
+function formatTime(t) {
+  return Math.floor(t / 60) + ":" +
+    String(Math.floor(t % 60)).padStart(2, "0");
+}
+
+function showScreen(kind) {
+  overlay.hidden = false;
+
+  const screens = {
+    title: `
+      <span class="seal">⟡</span>
+      <div class="kicker">THE CHAMBER HAS OPENED</div>
+      <h2>Face the Basilisk.</h2>
+      <p>
+        Deep beneath Hogwarts, a monster guards the way out.<br>
+        You have a sword, two healing draughts, and your nerve.
+      </p>
+      <div class="intro-grid">
+        <span><b>READ THE ATTACK</b>Amber warns you.</span>
+        <span><b>TIME YOUR ROLL</b>Stamina is survival.</span>
+        <span><b>STRIKE THE HEAD</b>Green means opening.</span>
+      </div>
+      <button class="primary" data-go="start">ENTER THE CHAMBER</button>
+      <p class="fine">
+        Hard by design. Learn its rhythm. Death is a lesson.<br>
+        WASD to move · J to strike · Space to roll · E to heal
+      </p>`,
+
+    paused: `
+      <span class="seal">⟡</span>
+      <div class="kicker">A MOMENT OF STILLNESS</div>
+      <h2>Paused.</h2>
+      <p>The chamber can wait. Your attempt is preserved.</p>
+      <button class="primary" data-go="resume">RESUME DUEL</button>
+      <p class="fine">
+        Or press Escape · Movement stops when you leave the game.
+      </p>`,
+
+    dead: `
+      <div class="kicker">THE CHAMBER CLAIMS ANOTHER</div>
+      <h2 style="color:#d5a293">You have fallen.</h2>
+      <p>${game?.cause || ""}</p>
+      <p class="fine">
+        Basilisk defeated:
+        ${Math.round((1 - (game?.boss.hp || 0) / 720) * 100)}%
+        · Time: ${formatTime(game?.time || 0)}
+      </p>
+      <button class="primary" data-go="start">RISE AGAIN</button>
+      <p class="fine">
+        Press R to retry · Two draughts restored. A fresh chance.
+      </p>`,
+
+    won: `
+      <span class="seal">⟡</span>
+      <div class="kicker">THE CHAMBER IS SILENT</div>
+      <h2>Basilisk vanquished.</h2>
+      <p>
+        The sword falls still. The gate opens.<br>
+        You learned its rhythm. You earned your escape.
+      </p>
+      <p class="fine">
+        Time: ${formatTime(game?.time || 0)}
+        · Healing draughts left: ${game?.player.flasks || 0}
+      </p>
+      <button class="primary" data-go="start">FACE IT AGAIN</button>
+      <p class="fine">
+        Press R to replay · Best time:
+        ${formatTime(stats.fastest || game?.time || 0)}
+      </p>`
+  };
+
+  panel.innerHTML = screens[kind];
+  document.getElementById("pause").textContent =
+    kind === "paused" ? "RESUME" : "PAUSE";
+}
+
+game = new ChamberGame(type => {
+  const sounds = {
+    roll: [170, .11, "triangle"],
+    swing: [330, .09, "sawtooth"],
+    hit: [190, .14, "triangle"],
+    armor: [560, .07, "square"],
+    hurt: [72, .2, "sawtooth"],
+    warning: [115, .14, "sine"],
+    heal: [580, .25, "sine"],
+    phase: [58, .6, "sawtooth"],
+    won: [740, .5, "sine"]
+  };
+
+  if (sounds[type]) tone(...sounds[type]);
+
+  if (type === "dead" || type === "won") {
+    stats.best = Math.max(stats.best, (1 - game.boss.hp / 720) * 100);
+
+    if (type === "won") {
+      stats.wins++;
+      stats.fastest = stats.fastest === null
+        ? game.time
+        : Math.min(stats.fastest, game.time);
+    }
+
+    updateRecord();
+    keys.clear();
+    touchKeys.clear();
+    showScreen(type);
+  }
+});
+
+function start() {
+  keys.clear();
+  touchKeys.clear();
+  stats.attempts++;
+  game.reset();
+  overlay.hidden = true;
+  document.getElementById("guide").open = false;
+  document.getElementById("pause").textContent = "PAUSE";
+  updateRecord();
+  stage.focus();
+  tone(220, .2);
+}
+
+function pause() {
+  if (game.mode === "playing") {
+    game.mode = "paused";
+    keys.clear();
+    touchKeys.clear();
+    showScreen("paused");
+  } else if (game.mode === "paused") {
+    game.mode = "playing";
+    overlay.hidden = true;
+    document.getElementById("pause").textContent = "PAUSE";
+    stage.focus();
+  }
+}
+
+function input() {
+  const right = keys.has("KeyD") ||
+    keys.has("ArrowRight") || touchKeys.has("right");
+  const left = keys.has("KeyA") ||
+    keys.has("ArrowLeft") || touchKeys.has("left");
+  const down = keys.has("KeyS") ||
+    keys.has("ArrowDown") || touchKeys.has("down");
+  const up = keys.has("KeyW") ||
+    keys.has("ArrowUp") || touchKeys.has("up");
+
+  return {
+    x: (right ? 1 : 0) - (left ? 1 : 0),
+    y: (down ? 1 : 0) - (up ? 1 : 0)
+  };
+}
+
+panel.addEventListener("click", e => {
+  if (e.target.dataset.go === "start") start();
+  if (e.target.dataset.go === "resume") pause();
+});
+
+document.getElementById("pause").addEventListener("click", pause);
+
+document.getElementById("sound").addEventListener("click", e => {
+  sound = !sound;
+  e.currentTarget.textContent = sound ? "SOUND ON" : "SOUND OFF";
+  e.currentTarget.setAttribute("aria-pressed", String(sound));
+  tone(440);
+  if (game.mode === "playing") stage.focus();
+});
+
+document.getElementById("full").addEventListener("click", async () => {
+  try {
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+    } else if (stage.requestFullscreen) {
+      await stage.requestFullscreen();
+    } else {
+      game.note("Fullscreen is unavailable in this browser.");
+    }
+  } catch {
+    game.note("Fullscreen is unavailable here.");
+  }
+
+  stage.focus();
+});
+
+document.addEventListener("keydown", e => {
+  if (e.target.closest("button") && e.code === "Space") return;
+
+  const owned = stage.contains(document.activeElement) ||
+    e.code === "Escape" || e.code === "KeyP";
+
+  if (!owned) return;
+
+  if ([
+    "Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight",
+    "KeyW", "KeyA", "KeyS", "KeyD", "KeyJ", "KeyE"
+  ].includes(e.code)) {
+    e.preventDefault();
+  }
+
+  if (e.repeat) return;
+
+  if (e.code === "Escape" || e.code === "KeyP") {
+    pause();
+    return;
+  }
+
+  if (
+    e.code === "KeyR" &&
+    (game.mode === "dead" || game.mode === "won")
+  ) {
+    start();
+    return;
+  }
+
+  keys.add(e.code);
+
+  if (e.code === "KeyJ") game.action("attack", input());
+  if (e.code === "Space") game.action("roll", input());
+  if (e.code === "KeyE") game.action("heal", input());
+});
+
+document.addEventListener("keyup", e => keys.delete(e.code));
+
+window.addEventListener("blur", () => {
+  if (game.mode === "playing") pause();
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden && game.mode === "playing") pause();
+});
+
+canvas.addEventListener("pointerdown", e => {
+  e.preventDefault();
+  stage.focus();
+  game.action("attack", input());
+});
+
+document.getElementById("guide").addEventListener("toggle", e => {
+  if (e.target.open && game.mode === "playing") pause();
+});
+
+for (const button of document.querySelectorAll("[data-dir],[data-action]")) {
+  button.addEventListener("pointerdown", e => {
+    e.preventDefault();
+    button.setPointerCapture(e.pointerId);
+
+    if (button.dataset.dir) {
+      touchKeys.add(button.dataset.dir);
+    } else {
+      game.action(button.dataset.action, input());
+    }
+  });
+
+  for (const event of ["pointerup", "pointercancel", "lostpointercapture"]) {
+    button.addEventListener(event, () => {
+      if (button.dataset.dir) touchKeys.delete(button.dataset.dir);
+    });
+  }
+}
+
+// Drawing helpers.
+
+function circle(x, y, r, fill, stroke) {
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, TAU);
+
+  if (fill) {
+    ctx.fillStyle = fill;
+    ctx.fill();
+  }
+
+  if (stroke) {
+    ctx.strokeStyle = stroke;
+    ctx.stroke();
+  }
+}
+
+function line(x, y, x2, y2, color, width = 1) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  ctx.lineWidth = 1;
+}
+
+function label(text, x, y, color = "#d8dfcf", size = 12, align = "left") {
+  ctx.fillStyle = color;
+  ctx.font = size + "px 'Courier New', monospace";
+  ctx.textAlign = align;
+  ctx.fillText(text, x, y);
+}
+
+function sector(x, y, r, angle, width, fill, stroke) {
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.arc(x, y, r, angle - width, angle + width);
+  ctx.closePath();
+
+  if (fill) {
+    ctx.fillStyle = fill;
+    ctx.fill();
+  }
+
+  if (stroke) {
+    ctx.strokeStyle = stroke;
+    ctx.stroke();
+  }
+}
+
+// Draw the static chamber once onto an offscreen canvas.
+
+const floorCanvas = document.createElement("canvas");
+floorCanvas.width = 960;
+floorCanvas.height = 600;
+const floor = floorCanvas.getContext("2d");
+
+function makeFloor() {
+  floor.fillStyle = "#101c18";
+  floor.fillRect(0, 0, 960, 600);
+  floor.fillStyle = "#23352b";
+  floor.fillRect(65, 112, 830, 398);
+
+  floor.strokeStyle = "#304238";
+
+  for (let y = 112; y < 510; y += 50) {
+    for (let x = 65 - (Math.floor(y / 50) % 2) * 50; x < 895; x += 100) {
+      floor.strokeRect(x, y, 100, 50);
+    }
+  }
+
+  floor.fillStyle = "#15261e";
+  floor.fillRect(0, 110, 65, 420);
+  floor.fillRect(895, 110, 65, 420);
+  floor.strokeStyle = "#697451";
+  floor.strokeRect(71, 118, 818, 386);
+  floor.strokeStyle = "#43583c";
+  floor.strokeRect(79, 126, 802, 370);
+
+  for (let x = 108; x < 890; x += 42) {
+    floor.beginPath();
+    floor.moveTo(x, 117);
+    floor.lineTo(x + 10, 126);
+    floor.lineTo(x + 20, 117);
+    floor.stroke();
+
+    floor.beginPath();
+    floor.moveTo(x, 505);
+    floor.lineTo(x + 10, 496);
+    floor.lineTo(x + 20, 505);
+    floor.stroke();
+  }
+
+  floor.strokeStyle = "#3b5040";
+
+  for (const r of [90, 95, 145, 152]) {
+    floor.beginPath();
+    floor.arc(480, 308, r, 0, TAU);
+    floor.stroke();
+  }
+
+  for (let i = 0; i < 16; i++) {
+    const a = i * TAU / 16;
+    floor.beginPath();
+    floor.moveTo(480 + Math.cos(a) * 97, 308 + Math.sin(a) * 97);
+    floor.lineTo(480 + Math.cos(a) * 143, 308 + Math.sin(a) * 143);
+    floor.stroke();
+  }
+
+  floor.save();
+  floor.translate(480, 308);
+  floor.rotate(Math.PI / 4);
+  floor.strokeRect(-45, -45, 90, 90);
+  floor.restore();
+
+  for (let i = 0; i < 90; i++) {
+    const x = 88 + (Math.sin(i * 82.31) * .5 + .5) * 780;
+    const y = 133 + (Math.cos(i * 17.91) * .5 + .5) * 355;
+    floor.fillStyle = i % 3 ? "#1a2b2260" : "#57724a30";
+    floor.fillRect(x, y, 4 + i % 7, 2);
+  }
+
+  for (const x of [43, 917]) {
+    for (const y of [150, 280, 430]) {
+      floor.fillStyle = "#314738";
+      floor.fillRect(x - 10, y - 30, 20, 60);
+      floor.strokeStyle = "#536747";
+      floor.strokeRect(x - 12, y - 33, 24, 66);
+    }
+  }
+
+  floor.fillStyle = "#0d1713";
+  floor.fillRect(419, 102, 122, 24);
+
+  for (let x = 430; x < 535; x += 17) {
+    floor.fillStyle = "#718060";
+    floor.fillRect(x, 102, 4, 24);
+  }
+}
+
+makeFloor();
+
+function drawPillars() {
+  for (const c of pillars) {
+    circle(c.x + 6, c.y + 8, c.r + 9, "#07120b70");
+    circle(c.x, c.y, c.r + 7, "#14251a", "#506446");
+    circle(c.x, c.y, c.r, "#435440", "#879170");
+    circle(c.x, c.y, c.r - 7, "#344833", "#586c4b");
+    line(c.x - 8, c.y - 15, c.x - 3, c.y + 3, "#1e3024", 2);
+    line(c.x - 3, c.y + 3, c.x + 8, c.y + 13, "#1e3024", 2);
+  }
+}
+
+function drawTelegraph() {
+  const b = game.boss;
+  if (b.state !== "windup" && b.state !== "active") return;
+
+  const active = b.state === "active";
+  const color = active ? "#e7d290" : "#d2ae67";
+  const fill = active ? "#e9d58a55" : "#e7b84e20";
+
+  ctx.save();
+  ctx.lineWidth = 2;
+  if (!active) ctx.setLineDash([7, 6]);
+
+  if (b.move === "lunge") {
+    line(b.origin.x, b.origin.y, b.end.x, b.end.y, fill, 60);
+    line(b.origin.x, b.origin.y, b.end.x, b.end.y, color, 2);
+    circle(b.end.x, b.end.y, 30, null, color);
+  }
+
+  if (b.move === "sweep") {
+    sector(b.x, b.y, 168, b.angle, 1.55, fill, color);
+  }
+
+  if (b.move === "venom") {
+    for (const t of b.targets) {
+      circle(t.x, t.y, t.r, fill, color);
+      line(t.x - 8, t.y, t.x + 8, t.y, color);
+      line(t.x, t.y - 8, t.x, t.y + 8, color);
+    }
+  }
+
+  if (b.move === "gaze") {
+    // Pillars cast visible safe shadows in the gaze.
+    const rays = 65;
+    ctx.beginPath();
+    ctx.moveTo(b.x, b.y);
+
+    for (let i = 0; i <= rays; i++) {
+      const a = b.angle - .31 + i / rays * .62;
+      const dx = Math.cos(a);
+      const dy = Math.sin(a);
+      let length = 1050;
+
+      for (const c of pillars) {
+        const cx = c.x - b.x;
+        const cy = c.y - b.y;
+        const proj = cx * dx + cy * dy;
+        const perp = cx * cx + cy * cy - proj * proj;
+
+        if (proj > 0 && perp < (c.r + 3) ** 2) {
+          length = Math.min(
+            length,
+            Math.max(0, proj - Math.sqrt((c.r + 3) ** 2 - perp))
+          );
+        }
+      }
+
+      ctx.lineTo(b.x + dx * length, b.y + dy * length);
+    }
+
+    ctx.closePath();
+    ctx.fillStyle = active ? "#c5eac78a" : "#d8bd6828";
+    ctx.fill();
+    ctx.strokeStyle = color;
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
+function drawBoss(now) {
+  const b = game.boss;
+  const open = b.state === "recover";
+  const phaseTwo = b.phase === 2;
+
+  for (let i = b.trail.length - 1; i >= 0; i--) {
+    const t = b.trail[i];
+    const r = 5 + 19 * (1 - i / Math.max(1, b.trail.length));
+
+    circle(t.x + 3, t.y + 5, r, "#07150b80");
+    circle(t.x, t.y, r, phaseTwo ? "#485139" : "#40553d", "#1e3023");
+
+    if (i % 2 === 0) {
+      ctx.save();
+      ctx.translate(t.x, t.y);
+      ctx.rotate(i * .4);
+      ctx.fillStyle = "#798366";
+      ctx.fillRect(-3, -3, 6, 6);
+      ctx.restore();
+    }
+  }
+
+  ctx.save();
+  ctx.translate(b.x, b.y);
+  ctx.rotate(b.angle);
+
+  if (open) {
+    circle(0, 0, 37 + Math.sin(now * 5) * 2, "#add6a817", "#badfa1");
+    ctx.setLineDash([3, 5]);
+    circle(0, 0, 42, null, "#badfa14a");
+    ctx.setLineDash([]);
+  }
+
+  ctx.fillStyle = phaseTwo ? "#64704b" : "#526a4a";
+  ctx.strokeStyle = open ? "#d2e4ac" : "#93a17b";
+  ctx.lineWidth = 2;
+
+  ctx.beginPath();
+  ctx.moveTo(34, -13);
+  ctx.lineTo(8, -26);
+  ctx.lineTo(-24, -18);
+  ctx.lineTo(-29, 0);
+  ctx.lineTo(-24, 18);
+  ctx.lineTo(8, 26);
+  ctx.lineTo(34, 13);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  line(-19, 0, 29, 0, "#2c422d", 2);
+
+  ctx.fillStyle = b.move === "gaze" && b.state === "active"
+    ? "#e4f9d9"
+    : phaseTwo ? "#edba6c" : "#d6c576";
+
+  ctx.fillRect(12, -17, 11, 5);
+  ctx.fillRect(12, 12, 11, 5);
+  ctx.fillStyle = "#eee4be";
+
+  for (const y of [-1, 1]) {
+    ctx.beginPath();
+    ctx.moveTo(26, y * 9);
+    ctx.lineTo(40, y * 7);
+    ctx.lineTo(28, y * 16);
+    ctx.fill();
+  }
+
+  if (b.state === "windup") {
+    const t = 1 - b.t / b.total;
+    ctx.strokeStyle = "#d8ba72";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(0, 0, 46, -Math.PI / 2, -Math.PI / 2 + TAU * t);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
+function drawPlayer(now) {
+  const p = game.player;
+
+  if (p.action === "roll") {
+    for (let i = 1; i <= 3; i++) {
+      circle(
+        p.x - p.dx * i * 12,
+        p.y - p.dy * i * 12,
+        12 - i * 2,
+        "#b9dac4" + ["", "44", "2a", "12"][i]
+      );
+    }
+  }
+
+  ctx.save();
+  ctx.translate(p.x, p.y);
+
+  const invincible = p.action === "roll" && p.t >= .045 && p.t < .31;
+
+  if (p.inv > 0) {
+    ctx.globalAlpha = .5 + Math.sin(now * 45) * .25;
+  }
+
+  circle(3, 6, 15, "#030c0870");
+  ctx.rotate(p.facing);
+
+  ctx.fillStyle = "#131b21";
+  ctx.strokeStyle = "#6c8d9b";
+  ctx.beginPath();
+  ctx.moveTo(4, -10);
+  ctx.lineTo(-19, -15);
+  ctx.lineTo(-15, 15);
+  ctx.lineTo(4, 10);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  circle(0, 0, 9, "#d4c5a6", "#ece4cd");
+  ctx.fillStyle = "#342e27";
+  ctx.fillRect(-7, -7, 10, 14);
+  line(10, -9, 18, -12, "#c2b490", 4);
+
+  let swordAngle = -.6;
+  if (p.action === "attack") {
+    swordAngle = -1.8 + clamp(p.t / .32, 0, 1) * 3.1;
+  }
+
+  ctx.save();
+  ctx.rotate(swordAngle);
+  line(9, 6, 43, 6, "#e2e8df", 3);
+  line(17, 0, 17, 12, "#c4a664", 3);
+  ctx.restore();
+
+  if (p.action === "attack") {
+    sector(0, 0, 85, swordAngle, .35, "#e7e3bd24", "#dbd4a881");
+  }
+
+  ctx.restore();
+
+  if (invincible) circle(p.x, p.y, 18, null, "#ddf1dc");
+
+  if (p.action === "heal") {
+    circle(p.x, p.y, 25, null, "#bacd8f");
+    ctx.strokeStyle = "#e4dba8";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(
+      p.x, p.y, 25,
+      -Math.PI / 2,
+      -Math.PI / 2 + TAU * p.t / p.duration
+    );
+    ctx.stroke();
+    ctx.lineWidth = 1;
+  }
+}
+
+function bar(x, y, width, height, value, color) {
+  ctx.fillStyle = "#06100c";
+  ctx.fillRect(x, y, width, height);
+  ctx.fillStyle = color;
+  ctx.fillRect(x + 2, y + 2, (width - 4) * clamp(value, 0, 1), height - 4);
+  ctx.strokeStyle = "#63715a";
+  ctx.strokeRect(x, y, width, height);
+}
+
+function drawHUD() {
+  const p = game.player;
+  const b = game.boss;
+
+  ctx.fillStyle = "#0a1410ed";
+  ctx.fillRect(0, 0, 960, 101);
+  line(20, 99, 940, 99, "#4b5f44");
+
+  label("THE SWORD-BEARER", 26, 26, "#c9cbb5", 11);
+  bar(26, 37, 228, 14, p.hp / 100, "#a06554");
+  bar(26, 58, 228, 8, p.stamina / 100, "#9caa76");
+  label("HP " + Math.ceil(p.hp) + " / 100", 267, 49, "#baaaa0", 10);
+  label("STAMINA " + Math.floor(p.stamina), 267, 67, "#98ac89", 10);
+  label("DRAUGHTS  " + ("◆ ".repeat(p.flasks) || "EMPTY"), 26, 85, "#d2bb83", 11);
+  label("CHAMBER OF SECRETS", 934, 27, "#acb39a", 11, "right");
+
+  label(
+    "PHASE " + (b.phase === 1
+      ? "I  /  THE AWAKENING"
+      : "II  /  SERPENT’S WRATH"),
+    934, 48,
+    b.phase === 2 ? "#e1b67b" : "#94aa92",
+    11, "right"
+  );
+
+  label(formatTime(game.time), 934, 81, "#c5c6aa", 16, "right");
+
+  const cues = {
+    lunge: b.combo ? "SECOND LUNGE — ROLL AGAIN" : "LUNGE — DODGE ACROSS",
+    sweep: "SWEEP — ROLL OR RETREAT",
+    venom: "VENOM — KEEP MOVING",
+    gaze: "DEADLY GAZE — USE A PILLAR"
+  };
+
+  const cue = b.state === "windup" ? cues[b.move]
+    : b.state === "recover" ? "OPENING — STRIKE THE HEAD"
+    : b.state === "enrage" ? "THE BASILISK SHEDS ITS SKIN"
+    : b.state === "active" ? ""
+    : game.messageTime > 0 ? game.message : "";
+
+  if (cue) {
+    ctx.fillStyle = "#09150de8";
+    ctx.fillRect(220, 112, 520, 25);
+    label(
+      cue, 480, 129,
+      b.state === "recover" ? "#d1e8b6" : "#dfc68d",
+      11, "center"
+    );
+  }
+
+  ctx.fillStyle = "#0a1410f5";
+  ctx.fillRect(0, 521, 960, 79);
+  label("THE BASILISK", 480, 544, "#d3c6a3", 15, "center");
+  label(Math.ceil(b.hp) + " / " + b.max, 916, 544, "#a8b392", 10, "right");
+  bar(44, 553, 872, 13, b.hp / b.max, b.phase === 2 ? "#b59156" : "#829467");
+
+  label(
+    b.state === "recover" ? "EXPOSED"
+      : b.state === "enrage" ? "ENRAGED" : "ANCIENT SCALES",
+    480, 586,
+    b.state === "recover" ? "#c3dca7" : "#859780",
+    9, "center"
+  );
+}
+
+function render(now) {
+  ctx.clearRect(0, 0, 960, 600);
+  ctx.save();
+
+  if (!reduced && game.shake > 0 && game.mode === "playing") {
+    ctx.translate(
+      Math.sin(now * 95) * game.shake,
+      Math.cos(now * 77) * game.shake * .5
+    );
+  }
+
+  ctx.drawImage(floorCanvas, 0, 0);
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(65, 112, 830, 398);
+  ctx.clip();
+
+  for (const pool of game.pools) {
+    ctx.globalAlpha = Math.min(1, pool.t);
+    circle(pool.x, pool.y, pool.r, "#77944355", "#9bb955");
+
+    for (let i = 0; i < 5; i++) {
+      const a = i * 2.4 + now * .3;
+      circle(
+        pool.x + Math.cos(a) * pool.r * .6,
+        pool.y + Math.sin(a) * pool.r * .6,
+        3 + Math.sin(now * 2 + i) * 2,
+        "#bad77266"
+      );
+    }
+
+    ctx.globalAlpha = 1;
+  }
+
+  drawTelegraph();
+  ctx.restore();
+
+  drawBoss(now);
+  drawPillars();
+  drawPlayer(now);
+
+  for (const effect of game.effects) {
+    ctx.globalAlpha = effect.t / effect.max;
+    label(
+      effect.text,
+      effect.x,
+      effect.y - (1 - effect.t / effect.max) * 28,
+      effect.color,
+      14,
+      "center"
+    );
+  }
+
+  ctx.globalAlpha = 1;
+
+  for (const x of [43, 917]) {
+    for (const y of [150, 280, 430]) {
+      const glow = ctx.createRadialGradient(x, y, 0, x, y, 45);
+      glow.addColorStop(0, "#9ebd7538");
+      glow.addColorStop(1, "#88b16c00");
+      ctx.fillStyle = glow;
+      ctx.fillRect(x - 45, y - 45, 90, 90);
+      circle(x, y, 4 + Math.sin(now * 3 + y) * .5, "#c6d697");
+    }
+  }
+
+  ctx.restore();
+  drawHUD();
+
+  if (game.flash > 0 && !reduced) {
+    ctx.fillStyle = "#a93f2222";
+    ctx.fillRect(0, 0, 960, 600);
+  }
+}
+
+let last = performance.now();
+
+function frame(now) {
+  const dt = Math.min((now - last) / 1000, .04);
+  last = now;
+  game.update(dt, input());
+  render(now / 1000);
+  requestAnimationFrame(frame);
+}
+
+updateRecord();
+showScreen("title");
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
